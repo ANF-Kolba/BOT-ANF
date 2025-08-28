@@ -18,3 +18,12 @@ client.on('messageCreate', (message) => {
 });
 
 client.login(process.env.DISCORD_TOKEN);
+const express = require('express');
+const app = express();
+
+app.get('/skip', (req, res) => res.send('Bot está online!'));
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Servidor HTTP rodando na porta ${PORT}`);
+});

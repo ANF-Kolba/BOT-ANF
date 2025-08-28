@@ -18,12 +18,15 @@ client.on('messageCreate', (message) => {
 });
 
 client.login(process.env.DISCORD_TOKEN);
+
 const express = require('express');
 const app = express();
+const port = process.env.PORT || 3000;
 
-app.get('/skip', (req, res) => res.send('Bot está online!'));
+app.get('/', (req, res) => {
+  res.send('Bot está rodando!');
+});
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Servidor HTTP rodando na porta ${PORT}`);
+app.listen(port, () => {
+  console.log(`Servidor HTTP rodando na porta ${port}`);
 });

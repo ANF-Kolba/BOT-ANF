@@ -1,8 +1,10 @@
+import config from "./config.json" assert { type: "json" };
+// ou importar módulos:
+import fs from "fs/promises";
 import { Client, GatewayIntentBits, Collection } from "discord.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import config from "./config.json" assert { type: "json" };
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

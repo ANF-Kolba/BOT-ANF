@@ -66,11 +66,11 @@ client.on("messageCreate", (message) => {
   if (!command) return;
 
   try {
-    command.execute(message, args);
-  } catch (error) {
-    console.error(`❌ Erro ao executar comando ${commandName}:`, error);
-    message.reply("❌ Ocorreu um erro ao executar esse comando!");
-  }
+  command.execute(message, args, config.prefix);
+} catch (error) {
+  console.error(`❌ Erro ao executar comando ${commandName}:`, error);
+  message.reply("❌ Ocorreu um erro ao executar esse comando!");
+}
 });
 
 // Login no Discord

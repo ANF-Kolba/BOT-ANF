@@ -32,13 +32,15 @@ for (const folder of commandFolders) {
     .then(files => files.filter(file => file.endsWith(".js")));
 
   for (const file of commandFiles) {
-    const filePath = `./commands/${folder}/${file}`;
+    const filePath = path.join(__dirname, "commands", folder, file);
     try {
-      const command = await import(filePath);
+      const command = await import(`file://${filePath}`);
 
       if (command?.default?.name && typeof command.default.execute === "function") {
+        // 👉 Adiciona a categoria ao comando
+        command.default.category = folder;
         client.commands.set(command.default.name, command.default);
-        console.log(`✅ Comando carregado: ${command.default.name}`);
+        console.log(`✅ Comando carregado: ${folder}/${command.default.name}`);
       } else {
         console.warn(`⚠️ Comando ignorado (sem exportação válida): ${filePath}`);
       }
@@ -66,11 +68,11 @@ client.on("messageCreate", (message) => {
   if (!command) return;
 
   try {
-  command.execute(message, args, config.prefix);
-} catch (error) {
-  console.error(`❌ Erro ao executar comando ${commandName}:`, error);
-  message.reply("❌ Ocorreu um erro ao executar esse comando!");
-}
+    command.execute(message, args, config.prefix);
+  } catch (error) {
+    console.error(`❌ Erro ao executar comando ${commandName}:`, error);
+    message.reply("❌ Ocorreu um erro ao executar esse comando!");
+  }
 });
 
 // Login no Discord

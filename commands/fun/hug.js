@@ -19,7 +19,7 @@ export default {
     const embed = new EmbedBuilder()
       .setDescription(`${message.author} deu um abraço em ${user} ❤️`)
       .setImage(gif)
-      .setColor("#7506beff"); // cor rosa, pode mudar
+      .setColor("#FF69B4"); // cor rosa, pode mudar
 
     await message.channel.send({ embeds: [embed] });
   }

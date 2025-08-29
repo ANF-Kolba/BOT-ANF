@@ -1,3 +1,5 @@
+import { EmbedBuilder } from 'discord.js';
+
 export default {
   name: "hug",
   description: "Abraça alguém!",
@@ -14,8 +16,11 @@ export default {
 
     const gif = gifs[Math.floor(Math.random() * gifs.length)];
 
-    await message.channel.send({
-      content: `${message.author} deu um abraço em ${user} ❤️\n${gif}`
-    });
+    const embed = new EmbedBuilder()
+      .setDescription(`${message.author} deu um abraço em ${user} ❤️`)
+      .setImage(gif)
+      .setColor("#7506beff"); // cor rosa, pode mudar
+
+    await message.channel.send({ embeds: [embed] });
   }
 };

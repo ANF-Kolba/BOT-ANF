@@ -59,7 +59,7 @@ client.once("ready", () => {
 
 // Escutar mensagens
 client.on("messageCreate", (message) => {
-  if (!message.content.startsWith(config.prefix) || message.author.bot) return;
+  if (message.author.bot || !message.content.startsWith(config.prefix)) return; // Ignora mensagens do bot e sem prefixo
 
   const args = message.content.slice(config.prefix.length).trim().split(/ +/);
   const commandName = args.shift().toLowerCase();
@@ -74,7 +74,6 @@ client.on("messageCreate", (message) => {
     message.reply("❌ Ocorreu um erro ao executar esse comando!");
   }
 });
-
 // Login no Discord
 client.login(process.env.DISCORD_TOKEN);
 

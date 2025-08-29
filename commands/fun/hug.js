@@ -10,10 +10,14 @@ export default {
     }
 
     const gifs = [
-  "https://media.tenor.com/images/13221040ff7f8cbb1a85b6565c4b8868/tenor.gif", 
-  "https://media.tenor.com/images/22839308c0b4b9fb782ae8e5f7e6cb7c/tenor.gif", 
-  "https://media.tenor.com/images/19674744a6dd192d45ce9cae16c235a4/tenor.gif", 
-  "https://media.tenor.com/images/13964328c5a70aa7eea47aabea3e1e5a/tenor.gif"
+  "https://media.giphy.com/media/l2QDM9Jnim1YVILXa/giphy.gif",
+  "https://media.giphy.com/media/od5H3PmEG5EVq/giphy.gif",
+  "https://media.giphy.com/media/xT0xeJpnrWC4XWblEk/giphy.gif",
+  "https://media.giphy.com/media/3ZnBrkqoaI2hq/giphy.gif",
+  "https://media.giphy.com/media/wnsgren9NtITS/giphy.gif",
+  "https://media.giphy.com/media/duzpaTbCUy9Vu/giphy.gif",
+  "https://media.giphy.com/media/svXXBgduBsJ1u/giphy.gif",
+  "https://media.giphy.com/media/49mdjsMrH7oze/giphy.gif"
 ];
 
     const gif = gifs[Math.floor(Math.random() * gifs.length)];
@@ -21,7 +25,7 @@ export default {
     const embed = new EmbedBuilder()
       .setDescription(`${message.author} deu um abraço em ${user} ❤️`)
       .setImage(gif)
-      .setColor("#aa69ff"); // cor rosa, pode mudar
+      .setColor("#aa69ff");
 
     await message.channel.send({ embeds: [embed] });
   }

@@ -7,11 +7,13 @@
     "start": "node index.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Kolba",
+  "type": "module",
   "license": "ISC",
   "dependencies": {
     "discord.js": "^14.22.1",
     "dotenv": "^17.2.1",
+    "better-sqlite3": "^9.0.0",
     "express": "^5.1.0"
   }
 }

@@ -1,13 +1,15 @@
-// index.js
-import config from "./config.json" assert { type: "json" };
 import { Client, GatewayIntentBits, Collection } from "discord.js";
 import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
-import express from "express"; // ✅ Corrigido: usar import, não require
+import express from "express";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Carregar config.json manualmente
+const configRaw = await fs.readFile(path.join(__dirname, "config.json"), "utf-8");
+const config = JSON.parse(configRaw);
 
 const client = new Client({
   intents: [

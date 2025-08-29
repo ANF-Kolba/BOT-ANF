@@ -1,5 +1,5 @@
 import { EmbedBuilder } from 'discord.js';
-
+console.log(`Comando hug chamado por ${message.author.tag}`);
 export default {
   name: "hug",
   description: "Abraça alguém!",

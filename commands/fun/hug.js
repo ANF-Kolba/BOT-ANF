@@ -10,17 +10,9 @@ export default {
     }
 
     const gifs = [
-  "https://tenor.com/view/hugs-anime-hug-anime-cute-blush-gif-21401206",
-  "https://tenor.com/view/anime-hug-kawaii-hugs-gif-9862193",
-  "https://tenor.com/view/anime-hug-gif-21597443",
-  "https://tenor.com/view/anime-hug-gif-13221040",
-  "https://tenor.com/view/anime-hug-surprised-sad-gif-12668473",
-  "https://tenor.com/view/anime-hug-hug-hanakokun-yashiro-nene-gif-16852734",
-  "https://tenor.com/view/anime-hug-gif-13964328",
-  "https://tenor.com/view/anime-hug-gif-22264928",
-  "https://tenor.com/view/anime-hug-gif-22952119",
-  "https://tenor.com/view/hug-anime-hug-anime-cute-uwu-gif-17264448"
-];
+      "https://media.tenor.com/2roX3uxz_68AAAAC/hug-anime.gif",
+      "https://media.tenor.com/3bTxZ4HdrysAAAAC/anime-hug.gif"
+    ];
 
     const gif = gifs[Math.floor(Math.random() * gifs.length)];
 

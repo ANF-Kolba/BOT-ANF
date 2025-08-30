@@ -4,7 +4,7 @@ import Database from "better-sqlite3";
 const db = new Database("economia.sqlite");
 
 export default {
-  name: "leaderboard",
+  name: ["leaderboard", "top"],
   description: "Mostra o ranking de moedas.",
   execute(message) {
     const top = db

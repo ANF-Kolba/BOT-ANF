@@ -25,3 +25,43 @@ export function updateCoins(id, amount) {
 export function setDaily(id, timestamp) {
   db.prepare("UPDATE users SET lastDaily = ? WHERE id = ?").run(timestamp, id);
 }
+// Criar tabela da loja
+db.prepare(`CREATE TABLE IF NOT EXISTS shop (
+  item TEXT PRIMARY KEY,
+  price INTEGER
+)`).run();
+
+// Criar tabela de inventário
+db.prepare(`CREATE TABLE IF NOT EXISTS inventory (
+  userId TEXT,
+  item TEXT,
+  FOREIGN KEY (userId) REFERENCES users(id)
+)`).run();
+
+export function addItemToShop(item, price) {
+  db.prepare("INSERT OR REPLACE INTO shop (item, price) VALUES (?, ?)").run(item, price);
+}
+
+export function getShop() {
+  return db.prepare("SELECT * FROM shop").all();
+}
+
+export function buyItem(userId, itemName) {
+  const item = db.prepare("SELECT * FROM shop WHERE item = ?").get(itemName);
+  if (!item) return { success: false, message: "❌ Esse item não existe!" };
+
+  const user = getUser(userId);
+  if (user.coins < item.price) {
+    return { success: false, message: "💸 Você não tem dinheiro suficiente!" };
+  }
+
+  // Remove moedas e adiciona item ao inventário
+  updateCoins(userId, -item.price);
+  db.prepare("INSERT INTO inventory (userId, item) VALUES (?, ?)").run(userId, itemName);
+
+  return { success: true, message: `✅ Você comprou **${itemName}** por ${item.price} moedas!` };
+}
+
+export function getInventory(userId) {
+  return db.prepare("SELECT item FROM inventory WHERE userId = ?").all(userId);
+}

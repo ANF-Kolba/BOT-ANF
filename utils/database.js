@@ -1,8 +1,14 @@
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 import Database from "better-sqlite3";
-import path from "path";
+
+// Obtém o caminho completo do arquivo atual
+const __filename = fileURLToPath(import.meta.url);
+// Obtém o diretório atual do arquivo
+const __dirname = dirname(__filename);
 
 // Caminho absoluto para garantir persistência, salva em /db/economia.sqlite
-const dbPath = path.join(__dirname, '..', 'db', 'economia.sqlite');
+const dbPath = join(__dirname, '..', 'db', 'economia.sqlite');
 const db = new Database(dbPath);
 
 // Criar a tabela de usuários se não existir

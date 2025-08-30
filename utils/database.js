@@ -1,18 +1,28 @@
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-import Database from "better-sqlite3";
+import fs from 'fs';
+import Database from 'better-sqlite3';
 
 // Obtém o caminho completo do arquivo atual
 const __filename = fileURLToPath(import.meta.url);
 // Obtém o diretório atual do arquivo
 const __dirname = dirname(__filename);
 
-// Caminho absoluto para garantir persistência, salva em /db/economia.sqlite
-const dbPath = join(__dirname, '..', 'db', 'economia.sqlite');
-const db = new Database(dbPath);
+// Caminho persistente no Render
+const dbDirectory = '/home/render/db';  // Caminho persistente para o Render
+const dbPath = join(dbDirectory, 'economia.sqlite');
+
+// Verificar se o diretório existe e criá-lo, se não
+if (!fs.existsSync(dbDirectory)) {
+  fs.mkdirSync(dbDirectory, { recursive: true });
+  console.log(`Diretório '${dbDirectory}' criado.`);
+}
 
 // Log para verificar o caminho do banco de dados
 console.log("Banco de dados localizado em:", dbPath);
+
+// Criar a instância do banco de dados SQLite
+const db = new Database(dbPath);
 
 // Criar a tabela 'users' se não existir
 db.prepare(`CREATE TABLE IF NOT EXISTS users (

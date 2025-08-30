@@ -2,7 +2,7 @@ import { EmbedBuilder } from "discord.js";
 import { getInventory } from "../../utils/database.js";
 
 export default {
-  name: "inventory",
+  name: "inv",
   description: "Mostra seus itens comprados.",
   execute(message) {
     const inv = getInventory(message.author.id);

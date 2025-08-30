@@ -2,7 +2,7 @@ import { EmbedBuilder } from "discord.js";
 import { getUser } from "../../utils/database.js";
 
 export default {
-  name: ["balance", "bank"],  // Comando aceita tanto !balance quanto !bank
+  name: "bank",  // Comando aceita tanto !balance quanto !bank
   description: "Veja seu saldo.",
   execute(message) {
     const user = getUser(message.author.id);

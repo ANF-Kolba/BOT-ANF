@@ -26,7 +26,7 @@ export default {
 
     const embed = new EmbedBuilder()
       .setTitle("💰 Recompensa Diária Recebida!")
-      .setDescription(`Você recebeu **${reward} moedas** no seu daily!`)
+      .setDescription(`Você recebeu **${reward} ANF Coins** no seu daily!`)
       .setColor("Gold")
       .setFooter({ text: "Volte amanhã para mais recompensas!" });
 

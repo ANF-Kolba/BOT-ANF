@@ -3,7 +3,6 @@ import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
 import express from "express";
-import sqlite3 from "sqlite3"; // Importando o SQLite
 
 // Corrigir __dirname e __filename com ESModules
 const __filename = fileURLToPath(import.meta.url);
@@ -53,26 +52,6 @@ for (const folder of commandFolders) {
   }
 }
 
-// Criar conexão com o banco de dados SQLite
-const db = new sqlite3.Database(process.env.DB_PATH || "/home/render/economia.sqlite", (err) => {
-  if (err) {
-    console.error("Erro ao abrir o banco de dados:", err.message);
-  } else {
-    console.log("Conexão com o banco de dados estabelecida.");
-  }
-});
-
-// Criar a tabela de usuários (se não existir)
-db.serialize(() => {
-  db.run(`
-    CREATE TABLE IF NOT EXISTS usuarios (
-      id INTEGER PRIMARY KEY,
-      nome TEXT,
-      saldo INTEGER
-    );
-  `);
-});
-
 // Evento quando o bot está pronto
 client.once("ready", () => {
   console.log(`🤖 Bot online como ${client.user.tag}`);
@@ -95,7 +74,6 @@ client.on("messageCreate", (message) => {
     message.reply("❌ Ocorreu um erro ao executar esse comando!");
   }
 });
-
 // Login no Discord
 client.login(process.env.DISCORD_TOKEN);
 

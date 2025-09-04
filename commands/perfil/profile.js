@@ -1,33 +1,42 @@
 import { AttachmentBuilder } from "discord.js";
 import { createCanvas, loadImage } from "@napi-rs/canvas";
-import { User, Cosmetic, Tag, Inventory } from "../../utils/database.js";
-import twemoji from "twemoji";
+import { User, Cosmetic, Tag } from "../../utils/database.js";
 
 export default {
   name: "profile",
   description: "Mostra o perfil com coins, descrição e tags equipadas",
   async execute(message) {
     try {
+      // Usuário alvo
       const alvo = message.mentions.users.first() || message.author;
       const member = await message.guild.members.fetch(alvo.id);
 
       // Dados do banco
       let user = await User.findByPk(alvo.id);
 
+      // Se não existir, cria dados padrão
       const coins = user ? user.coins : 0;
-      const banner = user?.equippedBanner ? await Cosmetic.findByPk(user.equippedBanner) : null;
+      const banner = user?.equippedBanner
+        ? await Cosmetic.findByPk(user.equippedBanner)
+        : null;
 
-      // Buscar até 3 tags equipadas
-      const tagsEquipped = await Inventory.findAll({
-        where: { userId: alvo.id, tagId: { not: null }, equipped: true },
-        include: [{ model: Tag, as: "tag" }],
-        limit: 3
-      });
+      // Busca até 3 tags equipadas (assumindo que você tenha relação user -> tags)
+      let tagsEquipped = [];
+      if (user?.equippedTags && Array.isArray(user.equippedTags)) {
+        tagsEquipped = await Tag.findAll({
+          where: { id: user.equippedTags.slice(0, 3) },
+        });
+      } else if (user?.equippedTagId) {
+        // fallback para versão antiga que só tinha 1
+        const single = await Tag.findByPk(user.equippedTagId);
+        if (single) tagsEquipped = [single];
+      }
 
+      // Criar canvas
       const canvas = createCanvas(800, 400);
       const ctx = canvas.getContext("2d");
 
-      // Fundo
+      // Fundo (banner ou cor sólida)
       if (banner) {
         const bg = await loadImage(banner.url);
         ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
@@ -37,7 +46,9 @@ export default {
       }
 
       // Avatar
-      const avatar = await loadImage(alvo.displayAvatarURL({ extension: "png", size: 128 }));
+      const avatar = await loadImage(
+        alvo.displayAvatarURL({ extension: "png", size: 128 })
+      );
       ctx.save();
       ctx.beginPath();
       ctx.arc(100, 100, 80, 0, Math.PI * 2, true);
@@ -46,12 +57,12 @@ export default {
       ctx.drawImage(avatar, 30, 30, 140, 140);
       ctx.restore();
 
-      // Nome
+      // Nome do usuário
       ctx.fillStyle = "#ffffff";
       ctx.font = "28px Sans";
       ctx.fillText(alvo.username, 200, 60);
 
-      // Descrição
+      // Descrição do Discord
       const userData = await alvo.fetch(true);
       const description = userData.bio || "Sem descrição.";
       ctx.font = "20px Sans";
@@ -59,56 +70,34 @@ export default {
       ctx.fillText(description.slice(0, 60), 200, 90);
 
       // Coins
-      const coinImg = await loadImage("https://cdn-icons-png.flaticon.com/512/138/138292.png");
+      const coinImg = await loadImage(
+        "https://cdn-icons-png.flaticon.com/512/138/138292.png"
+      );
       ctx.drawImage(coinImg, 180, 125, 32, 32);
       ctx.font = "22px Sans";
       ctx.fillStyle = "#ffd700";
       ctx.fillText(`${coins} ANF Coins`, 220, 152);
 
       // Tags equipadas
-      let tagX = 180;
-      let tagY = 190;
-
-      for (const inv of tagsEquipped) {
-        if (!inv.tag) continue;
-
-        const tag = inv.tag;
-        const emoji = tag.emoji || "";
-        const nome = tag.name;
-
-        if (emoji) {
-          // Converte emoji em URL usando Twemoji
-          const parsed = twemoji.parse(emoji, { folder: "svg", ext: ".svg" });
-          const url = parsed.match(/src="(.+?)"/)?.[1];
-
-          if (url) {
-            try {
-              const emojiImg = await loadImage(url);
-              ctx.drawImage(emojiImg, tagX, tagY - 20, 24, 24);
-              ctx.fillStyle = "#00ffcc";
-              ctx.font = "22px Sans";
-              ctx.fillText(nome, tagX + 30, tagY);
-            } catch {
-              ctx.fillStyle = "#00ffcc";
-              ctx.font = "22px Sans";
-              ctx.fillText(`${emoji} ${nome}`, tagX, tagY);
-            }
-          }
-        } else {
-          ctx.fillStyle = "#00ffcc";
-          ctx.font = "22px Sans";
-          ctx.fillText(nome, tagX, tagY);
-        }
-
-        tagY += 40; // próxima linha
+      ctx.font = "22px Sans";
+      ctx.fillStyle = "#00ffcc";
+      if (tagsEquipped.length > 0) {
+        tagsEquipped.forEach((tag, i) => {
+          // renderiza como 🔥 FIRE
+          ctx.fillText(`${tag.tag} ${tag.name}`, 180, 190 + i * 30);
+        });
+      } else {
+        ctx.fillText(" ", 180, 190);
       }
 
-      const attachment = new AttachmentBuilder(await canvas.encode("png"), { name: "profile.png" });
+      // Enviar imagem final
+      const attachment = new AttachmentBuilder(await canvas.encode("png"), {
+        name: "profile.png",
+      });
       return message.channel.send({ files: [attachment] });
-
     } catch (err) {
       console.error("❌ Erro no comando profile:", err);
       return message.reply("❌ Ocorreu um erro ao gerar o perfil.");
     }
-  }
+  },
 };

@@ -1,6 +1,7 @@
 import { AttachmentBuilder } from "discord.js";
 import { createCanvas, loadImage } from "@napi-rs/canvas";
 import { User, Cosmetic, Tag, Inventory } from "../../utils/database.js";
+import twemoji from "twemoji";
 
 export default {
   name: "profile",
@@ -22,11 +23,12 @@ export default {
       ],
     });
 
-    // Pegar tags equipadas (até 3)
-    const tagsEquipadas = inventory
-      .filter(i => i.tag) // só entradas que possuem tag
-      .slice(0, 3)
-      .map(i => `${i.tag.tag} ${i.tag.name}`); // emoji + nome
+    // Função para converter emoji em imagem via Twemoji
+    async function emojiToImage(emoji) {
+      const parsed = twemoji.parse(emoji, { folder: "72x72", ext: ".png" });
+      const url = parsed.match(/src="([^"]+)"/)[1];
+      return await loadImage(url);
+    }
 
     // Criar canvas
     const canvas = createCanvas(800, 400);
@@ -71,12 +73,30 @@ export default {
     ctx.fillText(`${coins} ANF Coins`, 220, 152);
 
     // Tags equipadas (até 3, lado a lado)
-    if (tagsEquipadas.length > 0) {
+    let startX = 180;
+    const y = 190;
+    const spacing = 180;
+
+    for (const t of inventory.filter(i => i.tag).slice(0, 3)) {
+      const emoji = t.tag.tag;
+      const name = t.tag.name;
+
+      try {
+        const img = await emojiToImage(emoji);
+        ctx.drawImage(img, startX, y - 20, 32, 32); // desenha emoji
+      } catch {
+        // fallback: se não conseguir carregar, escreve emoji como texto
+        ctx.fillStyle = "#00ffcc";
+        ctx.font = "22px Sans";
+        ctx.fillText(emoji, startX, y);
+      }
+
+      // Nome da tag ao lado
+      ctx.fillStyle = "#00ffcc";
       ctx.font = "22px Sans";
-      ctx.fillStyle = "#ffffff";
-      tagsEquipadas.forEach((tagStr, i) => {
-        ctx.fillText(tagStr, 180 + i * 200, 190); // ajusta a posição horizontal
-      });
+      ctx.fillText(name, startX + 40, y);
+
+      startX += spacing;
     }
 
     // Enviar imagem final

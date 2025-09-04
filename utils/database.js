@@ -94,6 +94,13 @@ export async function updateCoins(id, amount) {
   await user.save();
 }
 
+// Atualiza lastDaily
+export async function setDaily(userId, date = new Date()) {
+  const user = await getUser(userId);
+  user.lastDaily = date;
+  await user.save();
+}
+
 // Loja
 export async function addItemToShop(item, price, type = "item", reference = null) {
   await ShopItem.upsert({ item, price, type, reference });

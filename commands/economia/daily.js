@@ -6,16 +6,25 @@ export default {
   description: "Receba sua recompensa diária de ANF Coins",
   async execute(message) {
     const user = await getUser(message.author.id);
-    const now = Date.now();
-    const diff = now - (user.lastDaily || 0);
+    const now = new Date();
+    
+    // Diferença em milissegundos desde a última diária
+    const lastDaily = user.lastDaily || new Date(0);
+    const diff = now.getTime() - lastDaily.getTime();
 
-    if (diff < 24*60*60*1000) {
-      const horas = Math.floor((24*60*60*1000 - diff)/3600000);
-      const minutos = Math.floor(((24*60*60*1000 - diff)%3600000)/60000);
+    const cooldown = 24 * 60 * 60 * 1000; // 24 horas
+    if (diff < cooldown) {
+      const remaining = cooldown - diff;
+      const horas = Math.floor(remaining / 3600000);
+      const minutos = Math.floor((remaining % 3600000) / 60000);
       return message.reply(`⏳ Você já recebeu sua diária! Tente novamente em ${horas}h ${minutos}m.`);
     }
 
-    const valor = 100; // diário fixo
+    // Recompensa diária (pode ser aleatória se quiser)
+    const minCoins = 80;
+    const maxCoins = 150;
+    const valor = Math.floor(Math.random() * (maxCoins - minCoins + 1)) + minCoins;
+
     await updateCoins(message.author.id, valor);
     await setDaily(message.author.id, now);
 
@@ -24,6 +33,6 @@ export default {
       .setDescription(`${message.author} recebeu **${valor} ANF Coins**!`)
       .setColor("Green");
 
-    message.channel.send({ embeds: [embed] });
+    return message.channel.send({ embeds: [embed] });
   }
 };

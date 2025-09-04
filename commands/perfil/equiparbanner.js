@@ -1,51 +1,52 @@
 import { EmbedBuilder } from "discord.js";
-import { User, Cosmetic, Inventory, getUser } from "../../utils/database.js";
+import { User, Cosmetic, Tag, Inventory, getUser } from "../../utils/database.js";
 
 export default {
   name: "equipar",
-  description: "Equipe um banner ou ícone do inventário",
+  description: "Equipe um banner, ícone ou tag do inventário",
   async execute(message, args) {
     if (args.length < 2) {
-      return message.reply("❌ Use: `!equipar banner {nome}` ou `!equipar icon {nome}`");
+      return message.reply("❌ Use: `!equipar banner {nome}`, `!equipar icon {nome}` ou `!equipar tag {nome}`");
     }
 
     const tipo = args[0].toLowerCase();
     const nome = args.slice(1).join(" ");
 
-    if (!["banner", "icon"].includes(tipo)) {
-      return message.reply("❌ Tipo inválido! Use `banner` ou `icon`.");
+    if (!["banner", "icon", "tag"].includes(tipo)) {
+      return message.reply("❌ Tipo inválido! Use `banner`, `icon` ou `tag`.");
     }
 
-    // Procurar cosmético pelo nome e tipo
-    const cosmetic = await Cosmetic.findOne({ where: { name: nome, type: tipo } });
-    if (!cosmetic) {
-      return message.reply("❌ Cosmético não encontrado.");
+    // Buscar o item correto no banco
+    let item, possui;
+    if (tipo === "tag") {
+      item = await Tag.findOne({ where: { name: nome } });
+      if (!item) return message.reply("❌ Tag não encontrada.");
+      possui = await Inventory.findOne({ where: { userId: message.author.id, cosmeticId: item.id } });
+    } else {
+      item = await Cosmetic.findOne({ where: { name: nome, type: tipo } });
+      if (!item) return message.reply("❌ Cosmético não encontrado.");
+      possui = await Inventory.findOne({ where: { userId: message.author.id, cosmeticId: item.id } });
     }
 
-    // Verificar se o usuário possui esse cosmético
-    const possui = await Inventory.findOne({
-      where: { userId: message.author.id, cosmeticId: cosmetic.id }
-    });
-    if (!possui) {
-      return message.reply("❌ Você não possui esse cosmético.");
-    }
+    if (!possui) return message.reply(`❌ Você não possui esse ${tipo}.`);
 
     // Garantir que o usuário exista
     const user = await getUser(message.author.id);
 
-    // Equipar o cosmético
-    if (tipo === "banner") {
-      user.equippedBanner = cosmetic.id;
-    } else {
-      user.equippedIcon = cosmetic.id;
-    }
+    // Equipar item
+    if (tipo === "banner") user.equippedBanner = item.id;
+    else if (tipo === "icon") user.equippedIcon = item.id;
+    else if (tipo === "tag") user.equippedTagId = item.id;
+
     await user.save();
 
     const embed = new EmbedBuilder()
-      .setTitle("🎨 Cosmético equipado!")
-      .setDescription(`Você equipou o **${cosmetic.name}** (${tipo}).`)
-      .setImage(cosmetic.url)
+      .setTitle("🎨 Equipado!")
+      .setDescription(`Você equipou **${item.name}** (${tipo}).`)
       .setColor("Blue");
+
+    // Adicionar imagem se for banner ou ícone
+    if (tipo !== "tag") embed.setImage(item.url);
 
     return message.channel.send({ embeds: [embed] });
   }

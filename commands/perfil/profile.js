@@ -1,33 +1,33 @@
 import { AttachmentBuilder } from "discord.js";
 import { createCanvas, loadImage } from "@napi-rs/canvas";
-import { User, Cosmetic } from "../../utils/database.js";
+import { User, Cosmetic, Tag } from "../../utils/database.js";
 
 export default {
   name: "profile",
-  description: "Mostra o perfil com coins, descrição e cargos do usuário",
+  description: "Mostra o perfil com coins, descrição e tag equipada",
   async execute(message) {
     // Usuário alvo
     const alvo = message.mentions.users.first() || message.author;
     const member = await message.guild.members.fetch(alvo.id);
 
     // Dados do banco
-    const user = await User.findByPk(alvo.id);
-    if (!user) {
-      return message.reply("❌ Esse usuário ainda não tem perfil. Use um comando de economia antes.");
-    }
+    let user = await User.findByPk(alvo.id);
 
-    let banner = user.equippedBanner ? await Cosmetic.findByPk(user.equippedBanner) : null;
+    // Se não existir, criar dados padrão temporários
+    const coins = user ? user.coins : 0;
+    const banner = user?.equippedBanner ? await Cosmetic.findByPk(user.equippedBanner) : null;
+    const tag = user?.equippedTagId ? await Tag.findByPk(user.equippedTagId) : null;
 
-    // Canvas
+    // Criar canvas
     const canvas = createCanvas(800, 400);
     const ctx = canvas.getContext("2d");
 
-    // Fundo (banner ou cor padrão)
+    // Fundo (banner ou cor sólida)
     if (banner) {
       const bg = await loadImage(banner.url);
       ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
     } else {
-      ctx.fillStyle = "#2c2f33"; // cor sólida
+      ctx.fillStyle = "#2c2f33";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
 
@@ -58,22 +58,14 @@ export default {
     ctx.drawImage(coinImg, 180, 125, 32, 32);
     ctx.font = "22px Sans";
     ctx.fillStyle = "#ffd700";
-    ctx.fillText(`${user.coins} ANF Coins`, 220, 152);
+    ctx.fillText(`${coins} ANF Coins`, 220, 152);
 
-    // Cargos
-    ctx.font = "20px Sans";
-    ctx.fillStyle = "#ffffff";
-    ctx.fillText("Cargos:", 180, 190);
-
-    const roles = member.roles.cache
-      .filter(r => r.id !== message.guild.id)
-      .sort((a, b) => b.position - a.position)
-      .first(3);
-
-    roles.forEach((role, i) => {
-      ctx.fillStyle = role.color ? `#${role.color.toString(16).padStart(6, "0")}` : "#ffffff";
-      ctx.fillText(`@${role.name}`, 180, 220 + i * 30);
-    });
+    // Tag equipada
+    if (tag) {
+      ctx.font = "22px Sans";
+      ctx.fillStyle = "#00ffcc"; // cor padrão para tags
+      ctx.fillText(`Tag: ${tag.name}`, 180, 190);
+    }
 
     // Enviar imagem final
     const attachment = new AttachmentBuilder(await canvas.encode("png"), { name: "profile.png" });

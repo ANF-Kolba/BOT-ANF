@@ -1,34 +1,39 @@
 import { AttachmentBuilder } from "discord.js";
 import { createCanvas, loadImage } from "@napi-rs/canvas";
-import { User, Cosmetic, Tag, Inventory } from "../../utils/database.js";
-import { Op } from "sequelize";
+import { User, Cosmetic, Tag, Inventory, getUser } from "../../utils/database.js";
 
 export default {
   name: "profile",
-  description: "Mostra o perfil com coins, descrição e tags",
+  description: "Mostra o perfil com coins, descrição e até 3 tags equipadas",
   async execute(message) {
-    // Usuário alvo
     const alvo = message.mentions.users.first() || message.author;
-    const member = await message.guild.members.fetch(alvo.id);
 
-    // Dados do banco
-    const user = await User.findByPk(alvo.id);
-
+    // Buscar dados do usuário ou criar padrão temporário
+    let user = await User.findByPk(alvo.id);
     const coins = user ? user.coins : 0;
     const banner = user?.equippedBanner ? await Cosmetic.findByPk(user.equippedBanner) : null;
 
-    // Buscar todas as tags do inventário
-    const tagInventories = await Inventory.findAll({
-      where: { userId: alvo.id, tagId: { [Op.ne]: null } },
-      include: [{ model: Tag, as: "tag" }],
-      limit: 3 // mostrar no máximo 3 tags
+    // Buscar tags equipadas (até 3)
+    let tags = [];
+    if (user?.equippedTagId) {
+      const tag1 = await Tag.findByPk(user.equippedTagId);
+      if (tag1) tags.push(tag1);
+    }
+
+    const userInventory = await Inventory.findAll({
+      where: { userId: alvo.id, tagId: user?.equippedTagId || null },
+      include: [{ model: Tag, as: "tag" }]
     });
 
-    // Separar tag equipada e outras
-    const tags = tagInventories.map(t => t.tag);
-    const equippedTag = tags.find(t => t.id === user?.equippedTagId);
+    // Adiciona outras tags se houver
+    for (const inv of userInventory) {
+      if (inv.tag && !tags.find(t => t.id === inv.tag.id)) {
+        tags.push(inv.tag);
+      }
+      if (tags.length >= 3) break;
+    }
 
-    // Canvas
+    // Criar canvas
     const canvas = createCanvas(800, 400);
     const ctx = canvas.getContext("2d");
 
@@ -70,31 +75,20 @@ export default {
     ctx.fillStyle = "#ffd700";
     ctx.fillText(`${coins} ANF Coins`, 220, 152);
 
-    // Desenhar tags
+    // Tags (até 3)
     let startX = 180;
     const startY = 190;
-    const tagSize = 60;
-    const gap = 10;
+    const gap = 20;
+    ctx.fillStyle = "#00ffcc";
+    ctx.font = "22px Sans";
+    ctx.textAlign = "left";
 
-    tags.forEach(tag => {
-      // Contorno se for a equipada
-      if (tag.id === user?.equippedTagId) {
-        ctx.strokeStyle = "#00ffcc";
-        ctx.lineWidth = 3;
-        ctx.strokeRect(startX - 5, startY - 5, tagSize + 10, tagSize + 10);
-      }
-
-      // Desenhar um retângulo simples para a tag
-      ctx.fillStyle = "#444";
-      ctx.fillRect(startX, startY, tagSize, tagSize);
-
-      // Nome da tag (ou emoji se quiser)
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "16px Sans";
-      ctx.fillText(tag.name.slice(0, 4), startX + 5, startY + tagSize / 2 + 5);
-
-      startX += tagSize + gap;
-    });
+    for (let i = 0; i < Math.min(tags.length, 3); i++) {
+      const tag = tags[i];
+      const text = tag.emoji ? `${tag.emoji} ${tag.name}` : tag.name;
+      ctx.fillText(text, startX, startY);
+      startX += ctx.measureText(text).width + gap;
+    }
 
     // Enviar imagem
     const attachment = new AttachmentBuilder(await canvas.encode("png"), { name: "profile.png" });

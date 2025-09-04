@@ -1,9 +1,9 @@
 import { EmbedBuilder } from "discord.js";
-import { ShopItem, Cosmetic } from "../../utils/database.js";
+import { ShopItem, Cosmetic, Tag } from "../../utils/database.js";
 
 export default {
   name: "removeshop",
-  description: "Remove um item, cosmético ou cargo da loja (admin only)",
+  description: "Remove um item, cosmético, cargo ou tag da loja (admin only)",
   async execute(message, args) {
     if (!message.member.permissions.has("Administrator")) {
       return message.reply("❌ Você não tem permissão para isso.");
@@ -14,6 +14,7 @@ export default {
     const input = args.join(" ");
 
     try {
+      // Tenta remover item da ShopItem
       let shopItem = await ShopItem.findOne({ where: { item: input } });
 
       // Se não encontrar, tenta cargo mencionado
@@ -48,7 +49,21 @@ export default {
         });
       }
 
-      return message.reply(`❌ O item, cosmético ou cargo **${input}** não existe na loja.`);
+      // Tenta remover tag
+      const tag = await Tag.findOne({ where: { name: input } });
+      if (tag) {
+        await tag.destroy();
+        return message.channel.send({
+          embeds: [
+            new EmbedBuilder()
+              .setTitle("🏷️ Tag removida da loja!")
+              .setDescription(`✅ A tag **${input}** foi removida da loja com sucesso.`)
+              .setColor("Red"),
+          ],
+        });
+      }
+
+      return message.reply(`❌ O item, cosmético, cargo ou tag **${input}** não existe na loja.`);
     } catch (err) {
       console.error("Erro ao remover item da loja:", err);
       return message.reply("❌ Ocorreu um erro ao tentar remover o item da loja.");

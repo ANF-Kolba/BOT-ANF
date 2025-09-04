@@ -1,9 +1,9 @@
 import { EmbedBuilder } from "discord.js";
-import { getUser, Inventory, Cosmetic } from "../../utils/database.js";
+import { getUser, Inventory, Cosmetic, Tag } from "../../utils/database.js";
 
 export default {
   name: "removeitem",
-  description: "Remove um item ou cosmético do inventário de um usuário (admin only)",
+  description: "Remove um item, cosmético ou tag do inventário de um usuário (admin only)",
   async execute(message, args) {
     if (!message.member.permissions.has("Administrator")) {
       return message.reply("❌ Você não tem permissão para isso.");
@@ -13,11 +13,11 @@ export default {
     if (!alvo) return message.reply("❌ Você precisa mencionar um usuário válido.");
 
     if (args.length < 2) {
-      return message.reply("❌ Use: `!removeitem @usuario {nome-do-item} [cosmetic]`");
+      return message.reply("❌ Use: `!removeitem @usuario {nome-do-item} [cosmetic/tag]`");
     }
 
     const itemName = args[1];
-    const tipo = args[2]?.toLowerCase(); // opcional: "cosmetic"
+    const tipo = args[2]?.toLowerCase(); // opcional: "cosmetic" ou "tag"
 
     try {
       const user = await getUser(alvo.id);
@@ -27,6 +27,12 @@ export default {
         const cosmetic = await Cosmetic.findOne({ where: { name: itemName } });
         if (!cosmetic) return message.reply(`❌ Cosmético **${itemName}** não encontrado.`);
         item = await Inventory.findOne({ where: { userId: user.id, cosmeticId: cosmetic.id } });
+
+      } else if (tipo === "tag") {
+        const tag = await Tag.findOne({ where: { name: itemName } });
+        if (!tag) return message.reply(`❌ Tag **${itemName}** não encontrada.`);
+        item = await Inventory.findOne({ where: { userId: user.id, tagId: tag.id } });
+
       } else {
         item = await Inventory.findOne({ where: { userId: user.id, item: itemName } });
       }
@@ -37,7 +43,7 @@ export default {
 
       const embed = new EmbedBuilder()
         .setTitle("🗑️ Item removido!")
-        .setDescription(`✅ O ${tipo === "cosmetic" ? "cosmético" : "item"} **${itemName}** foi removido do inventário de ${alvo}.`)
+        .setDescription(`✅ O ${tipo === "cosmetic" ? "cosmético" : tipo === "tag" ? "tag" : "item"} **${itemName}** foi removido do inventário de ${alvo}.`)
         .setColor("Red");
 
       return message.channel.send({ embeds: [embed] });

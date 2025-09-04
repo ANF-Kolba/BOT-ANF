@@ -31,14 +31,15 @@ export const Cosmetic = sequelize.define("Cosmetic", {
   name: { type: DataTypes.STRING, allowNull: false },
   type: { type: DataTypes.ENUM("banner", "icon"), allowNull: false },
   url: { type: DataTypes.STRING, allowNull: false },
-  price: { type: DataTypes.INTEGER, defaultValue: 0 }, // 0 = dropável
+  price: { type: DataTypes.INTEGER, defaultValue: 0 },
 }, { tableName: "Cosmetics" });
 
 // Tags equipáveis
 export const Tag = sequelize.define("Tag", {
   id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-  name: { type: DataTypes.STRING, allowNull: false },
-  emoji: { type: DataTypes.STRING, allowNull: true }, // emoji opcional
+  name: { type: DataTypes.STRING, allowNull: false }, // Ex: "Fogo"
+  tag: { type: DataTypes.STRING, allowNull: false },  // Ex: "FIRE"
+  emoji: { type: DataTypes.STRING, allowNull: true }, // Ex: 🔥
   price: { type: DataTypes.INTEGER, defaultValue: 0 },
 }, { tableName: "Tags" });
 
@@ -55,7 +56,7 @@ export const ShopItem = sequelize.define("ShopItem", {
   item: { type: DataTypes.STRING, primaryKey: true },
   price: { type: DataTypes.INTEGER },
   type: { type: DataTypes.ENUM("item", "role", "banner", "icon", "lootbox", "tag"), defaultValue: "item" },
-  reference: { type: DataTypes.STRING, allowNull: true }, // ex: roleId ou outro
+  reference: { type: DataTypes.STRING, allowNull: true },
 }, { tableName: "ShopItems" });
 
 // ---------------------- RELAÇÕES ----------------------
@@ -72,7 +73,7 @@ Inventory.belongsTo(Tag, { foreignKey: "tagId", as: "tag" });
 export async function initDB() {
   try {
     await sequelize.authenticate();
-    await sequelize.sync({ alter: true }); // altera colunas sem apagar dados
+    await sequelize.sync({ alter: true });
     console.log("✅ Banco PostgreSQL conectado e sincronizado!");
   } catch (err) {
     console.error("❌ Erro ao conectar ao banco:", err);
@@ -99,6 +100,58 @@ export async function setDaily(userId, date = new Date()) {
   const user = await getUser(userId);
   user.lastDaily = date;
   await user.save();
+}
+
+// Equipar tag
+export async function equipTag(userId, tagId) {
+  const user = await getUser(userId);
+  user.equippedTagId = tagId;
+  await user.save();
+}
+
+// Inventário
+export async function getInventory(userId) {
+  const inv = await Inventory.findAll({
+    where: { userId },
+    include: [
+      { model: Cosmetic, as: "cosmetic" },
+      { model: Tag, as: "tag" },
+    ],
+  });
+
+  return inv.map(i => ({
+    item: i.item,
+    cosmetic: i.cosmetic
+      ? { id: i.cosmetic.id, name: i.cosmetic.name, type: i.cosmetic.type, url: i.cosmetic.url }
+      : null,
+    tag: i.tag
+      ? { id: i.tag.id, name: i.tag.name, tag: i.tag.tag, emoji: i.tag.emoji }
+      : null,
+  }));
+}
+
+export async function addItemToInventory(userId, itemName, cosmeticId = null, tagId = null) {
+  await Inventory.create({ userId, item: itemName, cosmeticId, tagId });
+}
+
+export async function removeItemFromInventory(userId, itemName, cosmeticId = null, tagId = null) {
+  const where = { userId };
+  if (cosmeticId) where.cosmeticId = cosmeticId;
+  else if (tagId) where.tagId = tagId;
+  else where.item = itemName;
+
+  const removed = await Inventory.destroy({ where, limit: 1 });
+  return removed > 0;
+}
+
+export async function hasCosmetic(userId, cosmeticId) {
+  const inv = await Inventory.findOne({ where: { userId, cosmeticId } });
+  return !!inv;
+}
+
+export async function hasTag(userId, tagId) {
+  const inv = await Inventory.findOne({ where: { userId, tagId } });
+  return !!inv;
 }
 
 // Loja
@@ -132,53 +185,8 @@ export async function getFullShop() {
     price: t.price,
     type: "tag",
     reference: t.emoji || null,
-    url: null,
+    tag: t.tag,
   }));
 
   return [...shopData, ...cosmeticsData, ...tagsData];
-}
-
-// Inventário
-export async function getInventory(userId) {
-  const inv = await Inventory.findAll({
-    where: { userId },
-    include: [
-      { model: Cosmetic, as: "cosmetic" },
-      { model: Tag, as: "tag" },
-    ],
-  });
-
-  return inv.map(i => ({
-    item: i.item,
-    cosmetic: i.cosmetic
-      ? { id: i.cosmetic.id, name: i.cosmetic.name, type: i.cosmetic.type, url: i.cosmetic.url }
-      : null,
-    tag: i.tag
-      ? { id: i.tag.id, name: i.tag.name, emoji: i.tag.emoji }
-      : null,
-  }));
-}
-
-export async function addItemToInventory(userId, itemName, cosmeticId = null, tagId = null) {
-  await Inventory.create({ userId, item: itemName, cosmeticId, tagId });
-}
-
-export async function removeItemFromInventory(userId, itemName, cosmeticId = null, tagId = null) {
-  const where = { userId };
-  if (cosmeticId) where.cosmeticId = cosmeticId;
-  else if (tagId) where.tagId = tagId;
-  else where.item = itemName;
-
-  const removed = await Inventory.destroy({ where, limit: 1 });
-  return removed > 0;
-}
-
-export async function hasCosmetic(userId, cosmeticId) {
-  const inv = await Inventory.findOne({ where: { userId, cosmeticId } });
-  return !!inv;
-}
-
-export async function hasTag(userId, tagId) {
-  const inv = await Inventory.findOne({ where: { userId, tagId } });
-  return !!inv;
 }

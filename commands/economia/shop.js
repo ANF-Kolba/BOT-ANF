@@ -20,11 +20,18 @@ export default {
         case "banner": typeIcon = "🖼️"; break;
         case "icon": typeIcon = "✨"; break;
         case "lootbox": typeIcon = "🎁"; break;
+        case "tag": typeIcon = "🏷️"; break;
+      }
+
+      let displayName = item.name;
+      if (item.type === "tag" && item.reference) {
+        // reference guarda o emoji
+        displayName = `${item.reference} ${item.name} (${item.tag || ""})`;
       }
 
       embed.addFields({
-        name: `${typeIcon} ${item.name}`,
-        value: `Preço: **${item.price} ANF Coins**${item.type === "role" ? `\nCargo ID: ${item.reference}` : ""}${item.url ? `\n[Visualizar](${item.url})` : ""}`,
+        name: `${typeIcon} ${displayName}`,
+        value: `Preço: **${item.price} ANF Coins**${item.type === "role" && item.reference ? `\nCargo ID: ${item.reference}` : ""}${item.url ? `\n[Visualizar](${item.url})` : ""}`,
         inline: false,
       });
     });

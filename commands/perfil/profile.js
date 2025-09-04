@@ -47,7 +47,7 @@ export default {
     const avatar = await loadImage(alvo.displayAvatarURL({ extension: "png", size: 128 }));
     ctx.save();
     ctx.beginPath();
-    ctx.arc(120, 75, 80, 0, Math.PI * 2, true);
+    ctx.arc(120, 110, 80, 0, Math.PI * 2, true);
     ctx.closePath();
     ctx.clip();
     ctx.drawImage(avatar, 50, 35, 145, 145);
@@ -56,7 +56,7 @@ export default {
     // Nome do usuário
     ctx.fillStyle = "#ffffff";
     ctx.font = "35px Sans";
-    ctx.fillText(alvo.username, 215, 60);
+    ctx.fillText(alvo.username, 215, 65);
 
     // Descrição do Discord
     const userData = await alvo.fetch(true);

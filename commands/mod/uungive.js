@@ -29,9 +29,11 @@ export default {
         item = await Inventory.findOne({ where: { userId: user.id, cosmeticId: cosmetic.id } });
 
       } else if (tipo === "tag") {
-        const tag = await Tag.findOne({ where: { name: itemName } });
-        if (!tag) return message.reply(`❌ Tag **${itemName}** não encontrada.`);
-        item = await Inventory.findOne({ where: { userId: user.id, tagId: tag.id } });
+        item = await Inventory.findOne({
+          where: { userId: user.id },
+          include: [{ model: Tag, as: "tag", where: { name: itemName } }]
+        });
+        if (!item) return message.reply(`❌ Tag **${itemName}** não encontrada no inventário do usuário.`);
 
       } else {
         item = await Inventory.findOne({ where: { userId: user.id, item: itemName } });

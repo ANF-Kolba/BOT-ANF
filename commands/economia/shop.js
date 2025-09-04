@@ -23,15 +23,12 @@ export default {
         case "tag": typeIcon = "🏷️"; break;
       }
 
-      let displayName = item.name;
-      if (item.type === "tag" && item.reference) {
-        // reference guarda o emoji
-        displayName = `${item.reference} ${item.name} (${item.tag || ""})`;
-      }
+      // Mostrar emoji se for tag
+      const displayName = item.type === "tag" && item.reference ? `${item.name} ${item.reference}` : item.name;
 
       embed.addFields({
         name: `${typeIcon} ${displayName}`,
-        value: `Preço: **${item.price} ANF Coins**${item.type === "role" && item.reference ? `\nCargo ID: ${item.reference}` : ""}${item.url ? `\n[Visualizar](${item.url})` : ""}`,
+        value: `Preço: **${item.price} ANF Coins**${item.type === "role" ? `\nCargo ID: ${item.reference}` : ""}${item.url ? `\n[Visualizar](${item.url})` : ""}`,
         inline: false,
       });
     });

@@ -16,16 +16,24 @@ export default {
       return message.reply("❌ Tipo inválido! Use `banner`, `icon` ou `tag`.");
     }
 
-    // Buscar o item correto no banco
     let item, possui;
+
     if (tipo === "tag") {
       item = await Tag.findOne({ where: { name: nome } });
       if (!item) return message.reply("❌ Tag não encontrada.");
-      possui = await Inventory.findOne({ where: { userId: message.author.id, cosmeticId: item.id } });
+
+      // Corrigido: verificar se o usuário possui a tag no inventário
+      possui = await Inventory.findOne({
+        where: { userId: message.author.id, tagId: item.id }
+      });
+
     } else {
       item = await Cosmetic.findOne({ where: { name: nome, type: tipo } });
       if (!item) return message.reply("❌ Cosmético não encontrado.");
-      possui = await Inventory.findOne({ where: { userId: message.author.id, cosmeticId: item.id } });
+
+      possui = await Inventory.findOne({
+        where: { userId: message.author.id, cosmeticId: item.id }
+      });
     }
 
     if (!possui) return message.reply(`❌ Você não possui esse ${tipo}.`);
@@ -42,7 +50,7 @@ export default {
 
     const embed = new EmbedBuilder()
       .setTitle("🎨 Equipado!")
-      .setDescription(`Você equipou **${item.name}** (${tipo}).`)
+      .setDescription(`Você equipou **${item.name}${tipo === "tag" && item.tag ? " " + item.tag : ""}** (${tipo}).`)
       .setColor("Blue");
 
     // Adicionar imagem se for banner ou ícone

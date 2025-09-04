@@ -8,17 +8,21 @@ export default {
     if (!message.member.permissions.has("Administrator"))
       return message.reply("❌ Você não tem permissão.");
 
-    if (args.length < 2) return message.reply("❌ Use: !addtag {preço} {nome da tag com emojis}");
+    if (args.length < 3)
+      return message.reply("❌ Use: !addtag {preço} {nome da tag} {emoji}");
 
     const price = parseInt(args.shift());
-    const name = args.join(" ");
+    const emoji = args.pop(); // último argumento é o emoji
+    const name = args.join(" "); // tudo que sobrou é o nome
 
     if (isNaN(price)) return message.reply("❌ Preço inválido.");
+    if (!emoji) return message.reply("❌ Você precisa colocar um emoji para a tag.");
 
-    const tag = await Tag.create({ name, price });
+    const tag = await Tag.create({ name, tag: emoji, price });
+
     const embed = new EmbedBuilder()
       .setTitle("🛒 Tag adicionada!")
-      .setDescription(`✅ Tag **${name}** adicionada à loja por ${price} coins.`)
+      .setDescription(`✅ Tag **${name} ${emoji}** adicionada à loja por ${price} coins.`)
       .setColor("Green");
 
     return message.channel.send({ embeds: [embed] });

@@ -61,12 +61,11 @@ export default {
     ctx.fillText(`${coins} ANF Coins`, 220, 152);
 
     // Tag equipada
-    if (tag) {
-      ctx.font = "22px Sans";
-      ctx.fillStyle = "#00ffcc"; // cor padrão para tags
-      ctx.fillText(`Tag: ${tag.name}`, 180, 190);
-    }
-
+if (tag) {
+  ctx.font = "22px Sans";
+  ctx.fillStyle = "#00ffcc"; // cor padrão para tags
+  ctx.fillText(`Tag: ${tag.name} ${tag.tag || ""}`, 180, 190); // adiciona emoji
+}
     // Enviar imagem final
     const attachment = new AttachmentBuilder(await canvas.encode("png"), { name: "profile.png" });
     return message.channel.send({ files: [attachment] });

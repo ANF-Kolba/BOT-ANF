@@ -24,7 +24,7 @@ export const User = sequelize.define(
     lastScratch: { type: DataTypes.DATE, allowNull: true },
     equippedBanner: { type: DataTypes.INTEGER, allowNull: true },
     equippedIcon: { type: DataTypes.INTEGER, allowNull: true },
-    equippedTagId: { type: DataTypes.INTEGER, allowNull: true }, // TAG equipada
+    equippedTagId: { type: DataTypes.INTEGER, allowNull: true }, // compatibilidade antiga
   },
   { tableName: "Users" }
 );
@@ -37,7 +37,7 @@ export const Cosmetic = sequelize.define(
     name: { type: DataTypes.STRING, allowNull: false },
     type: { type: DataTypes.ENUM("banner", "icon"), allowNull: false },
     url: { type: DataTypes.STRING, allowNull: false },
-    price: { type: DataTypes.INTEGER, defaultValue: 0 }, // 0 = dropável
+    price: { type: DataTypes.INTEGER, defaultValue: 0 },
   },
   { tableName: "Cosmetics" }
 );
@@ -47,8 +47,8 @@ export const Tag = sequelize.define(
   "Tag",
   {
     id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-    name: { type: DataTypes.STRING, allowNull: false },       // Ex: "Fogo"
-    tag: { type: DataTypes.STRING, allowNull: false, defaultValue: "🔥" }, // emoji padrão, evita null
+    name: { type: DataTypes.STRING, allowNull: false }, // Ex: "Fogo"
+    tag: { type: DataTypes.STRING, allowNull: false, defaultValue: "🔥" }, // Emoji
     price: { type: DataTypes.INTEGER, defaultValue: 0 },
   },
   { tableName: "Tags" }
@@ -60,8 +60,20 @@ export const Inventory = sequelize.define(
   {
     userId: { type: DataTypes.STRING, references: { model: User, key: "id" } },
     item: { type: DataTypes.STRING, allowNull: true },
-    cosmeticId: { type: DataTypes.INTEGER, allowNull: true, references: { model: Cosmetic, key: "id" } },
-    tagId: { type: DataTypes.INTEGER, allowNull: true, references: { model: Tag, key: "id" } },
+    cosmeticId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: { model: Cosmetic, key: "id" },
+    },
+    tagId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: { model: Tag, key: "id" },
+    },
+
+    // 🔥 novos campos para equipáveis
+    equipped: { type: DataTypes.BOOLEAN, defaultValue: false },
+    equippedSlot: { type: DataTypes.INTEGER, allowNull: true }, // 1, 2, 3...
   },
   { tableName: "Inventories" }
 );
@@ -72,8 +84,11 @@ export const ShopItem = sequelize.define(
   {
     item: { type: DataTypes.STRING, primaryKey: true },
     price: { type: DataTypes.INTEGER },
-    type: { type: DataTypes.ENUM("item", "role", "banner", "icon", "lootbox", "tag"), defaultValue: "item" },
-    reference: { type: DataTypes.STRING, allowNull: true }, // ex: roleId ou emoji
+    type: {
+      type: DataTypes.ENUM("item", "role", "banner", "icon", "lootbox", "tag"),
+      defaultValue: "item",
+    },
+    reference: { type: DataTypes.STRING, allowNull: true },
   },
   { tableName: "ShopItems" }
 );
@@ -130,7 +145,7 @@ export async function getFullShop() {
   const cosmetics = await Cosmetic.findAll();
   const tags = await Tag.findAll();
 
-  const shopData = shopItems.map(i => ({
+  const shopData = shopItems.map((i) => ({
     name: i.item,
     price: i.price,
     type: i.type,
@@ -138,7 +153,7 @@ export async function getFullShop() {
     url: null,
   }));
 
-  const cosmeticsData = cosmetics.map(c => ({
+  const cosmeticsData = cosmetics.map((c) => ({
     name: c.name,
     price: c.price,
     type: c.type,
@@ -146,7 +161,7 @@ export async function getFullShop() {
     url: c.url,
   }));
 
-  const tagsData = tags.map(t => ({
+  const tagsData = tags.map((t) => ({
     name: t.name,
     price: t.price,
     type: "tag",
@@ -167,10 +182,17 @@ export async function getInventory(userId) {
     ],
   });
 
-  return inv.map(i => ({
+  return inv.map((i) => ({
     item: i.item,
+    equipped: i.equipped,
+    equippedSlot: i.equippedSlot,
     cosmetic: i.cosmetic
-      ? { id: i.cosmetic.id, name: i.cosmetic.name, type: i.cosmetic.type, url: i.cosmetic.url }
+      ? {
+          id: i.cosmetic.id,
+          name: i.cosmetic.name,
+          type: i.cosmetic.type,
+          url: i.cosmetic.url,
+        }
       : null,
     tag: i.tag
       ? { id: i.tag.id, name: i.tag.name, emoji: i.tag.tag }
@@ -178,11 +200,21 @@ export async function getInventory(userId) {
   }));
 }
 
-export async function addItemToInventory(userId, itemName, cosmeticId = null, tagId = null) {
+export async function addItemToInventory(
+  userId,
+  itemName,
+  cosmeticId = null,
+  tagId = null
+) {
   await Inventory.create({ userId, item: itemName, cosmeticId, tagId });
 }
 
-export async function removeItemFromInventory(userId, itemName, cosmeticId = null, tagId = null) {
+export async function removeItemFromInventory(
+  userId,
+  itemName,
+  cosmeticId = null,
+  tagId = null
+) {
   const where = { userId };
   if (cosmeticId) where.cosmeticId = cosmeticId;
   else if (tagId) where.tagId = tagId;

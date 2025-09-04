@@ -50,7 +50,7 @@ export default {
     ctx.arc(100, 100, 80, 0, Math.PI * 2, true);
     ctx.closePath();
     ctx.clip();
-    ctx.drawImage(avatar, 30, 30, 140, 140);
+    ctx.drawImage(avatar, 50, 35, 145, 145);
     ctx.restore();
 
     // Nome do usuário
@@ -70,7 +70,7 @@ export default {
     ctx.drawImage(coinImg, 215, 140, 40, 40);
     ctx.font = "30px Sans";
     ctx.fillStyle = "#ffd700";
-    ctx.fillText(`${coins} ANF Coins`, 220, 152);
+    ctx.fillText(`${coins} ANF Coins`, 270, 140);
 
     // Tags equipadas (até 3, lado a lado)
     let startX = 50;
@@ -94,7 +94,7 @@ export default {
       // Nome da tag ao lado
       ctx.fillStyle = "#00ffcc";
       ctx.font = "30px Sans";
-      ctx.fillText(name, startX + 50, y);
+      ctx.fillText(name, startX + 50, y + 5);
 
       startX += spacing;
     }

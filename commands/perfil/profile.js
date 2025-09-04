@@ -47,7 +47,7 @@ export default {
     const avatar = await loadImage(alvo.displayAvatarURL({ extension: "png", size: 128 }));
     ctx.save();
     ctx.beginPath();
-    ctx.arc(50, 35, 70, 0, Math.PI * 2, true);
+    ctx.arc(145, 145, 70, 0, Math.PI * 2, true);
     ctx.closePath();
     ctx.clip();
     ctx.drawImage(avatar, 50, 35, 145, 145);
@@ -70,11 +70,11 @@ export default {
     ctx.drawImage(coinImg, 215, 140, 40, 40);
     ctx.font = "30px Sans";
     ctx.fillStyle = "#ffd700";
-    ctx.fillText(`${coins} ANF Coins`, 270, 140);
+    ctx.fillText(`${coins} ANF Coins`, 270, 155);
 
     // Tags equipadas (até 3, lado a lado)
     let startX = 50;
-    const y = 215;
+    const y = 225;
     const spacing = 220;
 
     for (const t of inventory.filter(i => i.tag).slice(0, 3)) {

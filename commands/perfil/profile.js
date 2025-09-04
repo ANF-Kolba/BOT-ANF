@@ -47,7 +47,7 @@ export default {
     const avatar = await loadImage(alvo.displayAvatarURL({ extension: "png", size: 128 }));
     ctx.save();
     ctx.beginPath();
-    ctx.arc(190, 190, 80, 0, Math.PI * 2, true);
+    ctx.arc(120, 75, 80, 0, Math.PI * 2, true);
     ctx.closePath();
     ctx.clip();
     ctx.drawImage(avatar, 50, 35, 145, 145);

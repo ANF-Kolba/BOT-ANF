@@ -177,8 +177,8 @@ export async function getInventory(userId) {
   const inv = await Inventory.findAll({
     where: { userId },
     include: [
-      { model: Cosmetic, as: "cosmetic" },
-      { model: Tag, as: "tag" },
+      { model: Cosmetic, as: "cosmetic" }, // ✅ usa o alias certo
+      { model: Tag, as: "tag" },            // ✅ usa o alias certo
     ],
   });
 
@@ -199,6 +199,7 @@ export async function getInventory(userId) {
       : null,
   }));
 }
+
 
 export async function addItemToInventory(
   userId,

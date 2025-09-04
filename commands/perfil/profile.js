@@ -1,30 +1,32 @@
 import { AttachmentBuilder } from "discord.js";
 import { createCanvas, loadImage } from "@napi-rs/canvas";
 import { User, Cosmetic, Tag, Inventory } from "../../utils/database.js";
-import { Op } from "sequelize";
 
 export default {
   name: "profile",
   description: "Mostra o perfil com coins, descrição e tags equipadas",
   async execute(message) {
-    // Usuário alvo
     const alvo = message.mentions.users.first() || message.author;
-    const member = await message.guild.members.fetch(alvo.id);
 
-    // Dados do banco
+    // Buscar usuário no banco
     let user = await User.findByPk(alvo.id);
-
-    // Se não existir, criar dados padrão temporários
     const coins = user ? user.coins : 0;
     const banner = user?.equippedBanner ? await Cosmetic.findByPk(user.equippedBanner) : null;
 
-    // Buscar até 3 tags equipadas (ordenadas por slot)
-    const tagsEquipped = await Inventory.findAll({
-      where: { userId: alvo.id, equipped: true, tagId: { [Op.ne]: null } },
-      include: [{ model: Tag }],
-      order: [["equippedSlot", "ASC"]],
-      limit: 3
+    // Buscar inventário do usuário
+    const inventory = await Inventory.findAll({
+      where: { userId: alvo.id },
+      include: [
+        { model: Tag, as: "tag" },
+        { model: Cosmetic, as: "cosmetic" },
+      ],
     });
+
+    // Pegar tags equipadas (até 3)
+    const tagsEquipadas = inventory
+      .filter(i => i.tag) // só entradas que possuem tag
+      .slice(0, 3)
+      .map(i => `${i.tag.tag} ${i.tag.name}`); // emoji + nome
 
     // Criar canvas
     const canvas = createCanvas(800, 400);
@@ -68,23 +70,13 @@ export default {
     ctx.fillStyle = "#ffd700";
     ctx.fillText(`${coins} ANF Coins`, 220, 152);
 
-    // Tags equipadas (slots 1, 2, 3)
-    let startX = 180;
-    const startY = 190;
-    const spacing = 160; // espaço entre as tags
-
-    for (let slot = 1; slot <= 3; slot++) {
-      const inv = tagsEquipped.find(t => t.equippedSlot === slot);
-
-      if (inv && inv.tag) {
-        ctx.font = "22px Sans";
-        ctx.fillStyle = "#00ffcc";
-        ctx.fillText(`${inv.tag.tag} ${inv.tag.name}`, startX, startY);
-      } else {
-        // Slot vazio → só não desenha nada (ou você pode desenhar um quadradinho transparente como placeholder)
-      }
-
-      startX += spacing;
+    // Tags equipadas (até 3, lado a lado)
+    if (tagsEquipadas.length > 0) {
+      ctx.font = "22px Sans";
+      ctx.fillStyle = "#ffffff";
+      tagsEquipadas.forEach((tagStr, i) => {
+        ctx.fillText(tagStr, 180 + i * 200, 190); // ajusta a posição horizontal
+      });
     }
 
     // Enviar imagem final

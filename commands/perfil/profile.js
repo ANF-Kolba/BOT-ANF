@@ -1,28 +1,34 @@
 import { AttachmentBuilder } from "discord.js";
 import { createCanvas, loadImage } from "@napi-rs/canvas";
-import { User, Cosmetic, Tag } from "../../utils/database.js";
+import Twemoji from "twemoji";
+import { User, Cosmetic, Tag, Inventory } from "../../utils/database.js";
+import { Op } from "sequelize";
 
 export default {
   name: "profile",
-  description: "Mostra o perfil com coins, descrição e tag equipada",
+  description: "Mostra o perfil com coins, descrição, banner, ícone e até 3 tags equipadas com emojis",
   async execute(message) {
-    // Usuário alvo
     const alvo = message.mentions.users.first() || message.author;
-    const member = await message.guild.members.fetch(alvo.id);
+    await message.guild.members.fetch(alvo.id);
 
     // Dados do banco
-    let user = await User.findByPk(alvo.id);
-
-    // Se não existir, criar dados padrão temporários
+    const user = await User.findByPk(alvo.id);
     const coins = user ? user.coins : 0;
     const banner = user?.equippedBanner ? await Cosmetic.findByPk(user.equippedBanner) : null;
-    const tag = user?.equippedTagId ? await Tag.findByPk(user.equippedTagId) : null;
+    const icon = user?.equippedIcon ? await Cosmetic.findByPk(user.equippedIcon) : null;
 
-    // Criar canvas
+    // Buscar até 3 tags equipadas
+    const equippedTags = await Inventory.findAll({
+      where: { userId: alvo.id, tagId: { [Op.ne]: null }, equipped: true },
+      include: [{ model: Tag, as: "tag" }],
+      limit: 3
+    });
+
+    // Canvas
     const canvas = createCanvas(800, 400);
     const ctx = canvas.getContext("2d");
 
-    // Fundo (banner ou cor sólida)
+    // Fundo
     if (banner) {
       const bg = await loadImage(banner.url);
       ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
@@ -60,13 +66,28 @@ export default {
     ctx.fillStyle = "#ffd700";
     ctx.fillText(`${coins} ANF Coins`, 220, 152);
 
-    // Tag equipada
-if (tag) {
-  ctx.font = "22px Sans";
-  ctx.fillStyle = "#00ffcc"; // cor padrão para tags
-  ctx.fillText(`Tag: ${tag.name} ${tag.tag || ""}`, 180, 190); // adiciona emoji
-}
-    // Enviar imagem final
+    // Tags equipadas (até 3)
+    let x = 180; // posição inicial horizontal
+    const y = 190; // altura das tags
+    const spacing = 150; // distância entre tags
+
+    for (const inv of equippedTags) {
+      const tag = inv.tag;
+      ctx.fillStyle = "#00ffcc";
+      ctx.font = "22px Sans";
+      ctx.fillText(tag.name, x, y);
+
+      if (tag.emoji) {
+        const parsed = Twemoji.parse(tag.emoji, { folder: "svg", ext: ".svg" });
+        const url = parsed.match(/src="(.+?)"/)[1];
+        const emojiImg = await loadImage(url);
+        ctx.drawImage(emojiImg, x + ctx.measureText(tag.name).width + 5, y - 20, 32, 32);
+      }
+
+      x += spacing;
+    }
+
+    // Enviar imagem
     const attachment = new AttachmentBuilder(await canvas.encode("png"), { name: "profile.png" });
     return message.channel.send({ files: [attachment] });
   }

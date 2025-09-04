@@ -55,27 +55,27 @@ export default {
 
     // Nome do usuário
     ctx.fillStyle = "#ffffff";
-    ctx.font = "28px Sans";
-    ctx.fillText(alvo.username, 200, 60);
+    ctx.font = "35px Sans";
+    ctx.fillText(alvo.username, 215, 60);
 
     // Descrição do Discord
     const userData = await alvo.fetch(true);
     const description = userData.bio || "Sem descrição.";
     ctx.font = "20px Sans";
     ctx.fillStyle = "#cccccc";
-    ctx.fillText(description.slice(0, 60), 200, 90);
+    ctx.fillText(description.slice(0, 60), 215, 100);
 
     // Coins
     const coinImg = await loadImage("https://cdn-icons-png.flaticon.com/512/138/138292.png");
-    ctx.drawImage(coinImg, 180, 125, 32, 32);
-    ctx.font = "22px Sans";
+    ctx.drawImage(coinImg, 215, 140, 40, 40);
+    ctx.font = "30px Sans";
     ctx.fillStyle = "#ffd700";
     ctx.fillText(`${coins} ANF Coins`, 220, 152);
 
     // Tags equipadas (até 3, lado a lado)
-    let startX = 180;
-    const y = 190;
-    const spacing = 180;
+    let startX = 50;
+    const y = 200;
+    const spacing = 220;
 
     for (const t of inventory.filter(i => i.tag).slice(0, 3)) {
       const emoji = t.tag.tag;
@@ -83,7 +83,7 @@ export default {
 
       try {
         const img = await emojiToImage(emoji);
-        ctx.drawImage(img, startX, y - 20, 32, 32); // desenha emoji
+        ctx.drawImage(img, startX, y - 20, 35, 35); // desenha emoji
       } catch {
         // fallback: se não conseguir carregar, escreve emoji como texto
         ctx.fillStyle = "#00ffcc";
@@ -93,8 +93,8 @@ export default {
 
       // Nome da tag ao lado
       ctx.fillStyle = "#00ffcc";
-      ctx.font = "22px Sans";
-      ctx.fillText(name, startX + 40, y);
+      ctx.font = "30px Sans";
+      ctx.fillText(name, startX + 50, y);
 
       startX += spacing;
     }

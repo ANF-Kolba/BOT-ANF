@@ -86,13 +86,13 @@ export default {
         ctx.drawImage(img, startX, y - 20, 35, 35); // desenha emoji
       } catch {
         // fallback: se não conseguir carregar, escreve emoji como texto
-        ctx.fillStyle = "#00ffcc";
+        ctx.fillStyle = "#ffffff";
         ctx.font = "22px Sans";
         ctx.fillText(emoji, startX, y);
       }
 
       // Nome da tag ao lado
-      ctx.fillStyle = "#00ffcc";
+      ctx.fillStyle = "#ffffff";
       ctx.font = "30px Sans";
       ctx.fillText(name, startX + 50, y + 10);
 

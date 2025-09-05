@@ -125,10 +125,14 @@ export default {
     const xpPercent = Math.min((XP / Math.pow(level + 1, 2)) * 100, 100);
 
     // Barra de XP
-    const barX = 360;
-    const barY = 50;
+    const barX = 55;
+    const barY = 310;
     const barWidth = 646;
     const barHeight = 20;
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "18px Sans";
+    ctx.fillText(`Level: ${level} (${xpPercent.toFixed(1)}%)`, 210, 248);
 
     ctx.fillStyle = "#555555";
     ctx.fillRect(barX, barY, barWidth, barHeight);

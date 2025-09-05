@@ -8,6 +8,7 @@ export default {
   description: "Mostra o perfil com coins, descrição e tags equipadas",
   async execute(message) {
     const alvo = message.mentions.users.first() || message.author;
+  const member = message.guild ? message.guild.members.cache.get(alvo.id) : null;
 
     // Buscar usuário no banco
     let user = await User.findByPk(alvo.id);

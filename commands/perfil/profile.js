@@ -98,23 +98,29 @@ export default {
 
       startX += spacing;
     }
-// Mensagens e tempo em call
+
+    // 📊 Mensagens e tempo em call
     let totalMessages = 0;
-    message.guild.channels.cache.forEach(channel => {
-      if (channel.isTextBased()) {
-        totalMessages += channel.messages.cache.filter(m => m.author.id === alvo.id).size;
-      }
-    });
+    if (message.guild) {
+      message.guild.channels.cache.forEach(channel => {
+        if (channel.isTextBased()) {
+          totalMessages += channel.messages.cache.filter(m => m.author.id === alvo.id).size;
+        }
+      });
+    }
+
+    // Pega o membro do servidor (se existir)
+    const member = message.guild ? message.guild.members.cache.get(alvo.id) : null;
 
     let totalMinutes = 0;
     if (member?.voice?.channel) {
       const joinedTimestamp = member.voice.channel.joinedTimestamp || Date.now();
       totalMinutes = Math.floor((Date.now() - joinedTimestamp) / 1000 / 60);
     }
-        // XP/Level
+
+    // XP/Level
     const totalHours = totalMinutes / 60;
-    const XP =
-      Math.log(totalMessages + 1) * 12 + Math.pow(totalHours, 1.3) * 6;
+    const XP = Math.log(totalMessages + 1) * 12 + Math.pow(totalHours, 1.3) * 6;
     const level = Math.floor(Math.sqrt(XP));
     const xpPercent = Math.min((XP / Math.pow(level + 1, 2)) * 100, 100);
 
@@ -133,6 +139,7 @@ export default {
     ctx.strokeStyle = "#ffffff";
     ctx.lineWidth = 3;
     ctx.strokeRect(barX, barY, barWidth, barHeight);
+
     // Enviar imagem final
     const attachment = new AttachmentBuilder(await canvas.encode("png"), { name: "profile.png" });
     return message.channel.send({ files: [attachment] });

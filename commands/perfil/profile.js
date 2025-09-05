@@ -132,7 +132,7 @@ export default {
 
     ctx.fillStyle = "#ffffff";
     ctx.font = "18px Sans";
-    ctx.fillText(`Level: ${level} (${xpPercent.toFixed(1)}%)`, 55, 310);
+    ctx.fillText(`Level: ${level} (${xpPercent.toFixed(1)}%)`, 55, 340);
 
     ctx.fillStyle = "#555555";
     ctx.fillRect(barX, barY, barWidth, barHeight);

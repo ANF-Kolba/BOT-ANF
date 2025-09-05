@@ -99,21 +99,7 @@ export default {
 
       startX += spacing;
     }
-// Mensagens e tempo em call
-    let totalMessages = 0;
-    message.guild.channels.cache.forEach(channel => {
-      if (channel.isTextBased()) {
-        totalMessages += channel.messages.cache.filter(m => m.author.id === alvo.id).size;
-      }
-    });
-
-    let totalMinutes = 0;
-if (member?.voice?.channel) {
-  const joinedTimestamp = member.voice.channel.joinedTimestamp || Date.now();
-  totalMinutes = Math.floor((Date.now() - joinedTimestamp) / 1000 / 60);
-    }
-
-    // XP/Level
+// XP/Level
     const totalHours = totalMinutes / 60;
     const XP =
       Math.log(totalMessages + 1) * 12 + Math.pow(totalHours, 1.3) * 6;
@@ -126,15 +112,15 @@ if (member?.voice?.channel) {
     ctx.fillText(`Level: ${level} (${xpPercent.toFixed(1)}%)`, 210, 248);
 
     // Barra de XP
-    const barX = 200;
-    const barY = 260;
-    const barWidth = 550;
+    const barX = 360;
+    const barY = 50;
+    const barWidth = 646;
     const barHeight = 20;
 
     ctx.fillStyle = "#555555";
     ctx.fillRect(barX, barY, barWidth, barHeight);
 
-    ctx.fillStyle = "#00ffcc";
+    ctx.fillStyle = "#9900ff";
     ctx.fillRect(barX, barY, (xpPercent / 100) * barWidth, barHeight);
 
     ctx.strokeStyle = "#ffffff";

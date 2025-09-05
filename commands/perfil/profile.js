@@ -98,44 +98,47 @@ export default {
 
       startX += spacing;
     }
- // Mensagens e tempo em call (agora em minutos)
-        let totalMessages = 0;
-        message.guild.channels.cache.forEach(channel => {
-            if (channel.isTextBased()) {
-                totalMessages += channel.messages.cache.filter(m => m.author.id === user.id).size;
-            }
-        });
+// Mensagens e tempo em call
+    let totalMessages = 0;
+    message.guild.channels.cache.forEach(channel => {
+      if (channel.isTextBased()) {
+        totalMessages += channel.messages.cache.filter(m => m.author.id === alvo.id).size;
+      }
+    });
 
-        let totalMinutes = 0;
-        if (member.voice.channel) {
-            const joinedTimestamp = member.voice?.channel.joinedTimestamp || Date.now();
-            totalMinutes = Math.floor((Date.now() - joinedTimestamp) / 1000 / 60);
-        }
+    let totalMinutes = 0;
+    if (member?.voice?.channel) {
+      const joinedTimestamp = member.voice.channel.joinedTimestamp || Date.now();
+      totalMinutes = Math.floor((Date.now() - joinedTimestamp) / 1000 / 60);
+    }
 
-        // XP/Level (a conversão ainda é feita internamente em horas)
-        const totalHours = totalMinutes / 60;
-        const XP = Math.log(totalMessages + 1) * 12 + Math.pow(totalHours, 1.3) * 6;
-        const level = Math.floor(Math.sqrt(XP));
-        const xpPercent = Math.min((XP / Math.pow(level + 1, 2)) * 100, 100);
+    // XP/Level
+    const totalHours = totalMinutes / 60;
+    const XP =
+      Math.log(totalMessages + 1) * 12 + Math.pow(totalHours, 1.3) * 6;
+    const level = Math.floor(Math.sqrt(XP));
+    const xpPercent = Math.min((XP / Math.pow(level + 1, 2)) * 100, 100);
 
-        ctx.fillText(`${totalMinutes}min`, 210, 218);
-        ctx.fillText(`Level: ${level} (${xpPercent.toFixed(1)}%)`, 210, 248);
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "18px Sans";
+    ctx.fillText(`${totalMinutes} min em call`, 210, 218);
+    ctx.fillText(`Level: ${level} (${xpPercent.toFixed(1)}%)`, 210, 248);
 
-        // 5️⃣ Barra de XP colorida
-        const barX = 200;
-        const barY = 260;
-        const barWidth = 550;
-        const barHeight = 20;
+    // Barra de XP
+    const barX = 200;
+    const barY = 260;
+    const barWidth = 550;
+    const barHeight = 20;
 
-        ctx.fillStyle = '#555555';
-        ctx.fillRect(barX, barY, barWidth, barHeight);
+    ctx.fillStyle = "#555555";
+    ctx.fillRect(barX, barY, barWidth, barHeight);
 
-        ctx.fillStyle = '#00ffcc';
-        ctx.fillRect(barX, barY, (xpPercent / 100) * barWidth, barHeight);
+    ctx.fillStyle = "#00ffcc";
+    ctx.fillRect(barX, barY, (xpPercent / 100) * barWidth, barHeight);
 
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 3;
-        ctx.strokeRect(barX, barY, barWidth, barHeight);
+    ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 3;
+    ctx.strokeRect(barX, barY, barWidth, barHeight);
     // Enviar imagem final
     const attachment = new AttachmentBuilder(await canvas.encode("png"), { name: "profile.png" });
     return message.channel.send({ files: [attachment] });

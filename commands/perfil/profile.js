@@ -98,14 +98,7 @@ export default {
 
       startX += spacing;
     }
-// Datas
-        ctx.drawImage(iconCalendar, 180, 100, 22, 22);
-        ctx.fillText(`${new Date(user.createdTimestamp).toLocaleDateString('pt-BR')}`, 210, 123);
-
-        ctx.drawImage(iconDoor, 180, 135, 22, 22);
-        ctx.fillText(`${new Date(member.joinedTimestamp).toLocaleDateString('pt-BR')}`, 210, 158);
-
-        // Mensagens e tempo em call (agora em minutos)
+ // Mensagens e tempo em call (agora em minutos)
         let totalMessages = 0;
         message.guild.channels.cache.forEach(channel => {
             if (channel.isTextBased()) {
@@ -125,13 +118,7 @@ export default {
         const level = Math.floor(Math.sqrt(XP));
         const xpPercent = Math.min((XP / Math.pow(level + 1, 2)) * 100, 100);
 
-        ctx.drawImage(iconMessages, 180, 165, 22, 22);
-        ctx.fillText(`${totalMessages}`, 210, 188);
-
-        ctx.drawImage(iconHeadset, 180, 195, 22, 22);
         ctx.fillText(`${totalMinutes}min`, 210, 218);
-
-        ctx.drawImage(iconStar, 180, 225, 22, 22);
         ctx.fillText(`Level: ${level} (${xpPercent.toFixed(1)}%)`, 210, 248);
 
         // 5️⃣ Barra de XP colorida

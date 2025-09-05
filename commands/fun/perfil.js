@@ -78,7 +78,7 @@ export default {
         // 3️⃣ Avatar centralizado com moldura
         const avatar = await loadImage(user.displayAvatarURL({ extension: 'png', size: 512 }));
         const avatarSize = 150;
-        const avatarX = 75;
+        const avatarX = 25;
         const avatarY = height / 2 - avatarSize / 2;
 
         ctx.save();

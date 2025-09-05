@@ -98,7 +98,57 @@ export default {
 
       startX += spacing;
     }
+// Datas
+        ctx.drawImage(iconCalendar, 180, 100, 22, 22);
+        ctx.fillText(`${new Date(user.createdTimestamp).toLocaleDateString('pt-BR')}`, 210, 123);
 
+        ctx.drawImage(iconDoor, 180, 135, 22, 22);
+        ctx.fillText(`${new Date(member.joinedTimestamp).toLocaleDateString('pt-BR')}`, 210, 158);
+
+        // Mensagens e tempo em call (agora em minutos)
+        let totalMessages = 0;
+        message.guild.channels.cache.forEach(channel => {
+            if (channel.isTextBased()) {
+                totalMessages += channel.messages.cache.filter(m => m.author.id === user.id).size;
+            }
+        });
+
+        let totalMinutes = 0;
+        if (member.voice.channel) {
+            const joinedTimestamp = member.voice?.channel.joinedTimestamp || Date.now();
+            totalMinutes = Math.floor((Date.now() - joinedTimestamp) / 1000 / 60);
+        }
+
+        // XP/Level (a conversão ainda é feita internamente em horas)
+        const totalHours = totalMinutes / 60;
+        const XP = Math.log(totalMessages + 1) * 12 + Math.pow(totalHours, 1.3) * 6;
+        const level = Math.floor(Math.sqrt(XP));
+        const xpPercent = Math.min((XP / Math.pow(level + 1, 2)) * 100, 100);
+
+        ctx.drawImage(iconMessages, 180, 165, 22, 22);
+        ctx.fillText(`${totalMessages}`, 210, 188);
+
+        ctx.drawImage(iconHeadset, 180, 195, 22, 22);
+        ctx.fillText(`${totalMinutes}min`, 210, 218);
+
+        ctx.drawImage(iconStar, 180, 225, 22, 22);
+        ctx.fillText(`Level: ${level} (${xpPercent.toFixed(1)}%)`, 210, 248);
+
+        // 5️⃣ Barra de XP colorida
+        const barX = 200;
+        const barY = 260;
+        const barWidth = 550;
+        const barHeight = 20;
+
+        ctx.fillStyle = '#555555';
+        ctx.fillRect(barX, barY, barWidth, barHeight);
+
+        ctx.fillStyle = '#00ffcc';
+        ctx.fillRect(barX, barY, (xpPercent / 100) * barWidth, barHeight);
+
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(barX, barY, barWidth, barHeight);
     // Enviar imagem final
     const attachment = new AttachmentBuilder(await canvas.encode("png"), { name: "profile.png" });
     return message.channel.send({ files: [attachment] });

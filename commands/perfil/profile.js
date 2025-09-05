@@ -107,9 +107,9 @@ export default {
     });
 
     let totalMinutes = 0;
-    if (member?.voice?.channel) {
-      const joinedTimestamp = member.voice.channel.joinedTimestamp || Date.now();
-      totalMinutes = Math.floor((Date.now() - joinedTimestamp) / 1000 / 60);
+if (member?.voice?.channel) {
+  const joinedTimestamp = member.voice.channel.joinedTimestamp || Date.now();
+  totalMinutes = Math.floor((Date.now() - joinedTimestamp) / 1000 / 60);
     }
 
     // XP/Level

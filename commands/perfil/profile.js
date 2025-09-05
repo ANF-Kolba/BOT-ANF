@@ -8,7 +8,6 @@ export default {
   description: "Mostra o perfil com coins, descrição e tags equipadas",
   async execute(message) {
     const alvo = message.mentions.users.first() || message.author;
-  const member = message.guild ? message.guild.members.cache.get(alvo.id) : null;
 
     // Buscar usuário no banco
     let user = await User.findByPk(alvo.id);
@@ -99,17 +98,25 @@ export default {
 
       startX += spacing;
     }
-// XP/Level
+// Mensagens e tempo em call
+    let totalMessages = 0;
+    message.guild.channels.cache.forEach(channel => {
+      if (channel.isTextBased()) {
+        totalMessages += channel.messages.cache.filter(m => m.author.id === alvo.id).size;
+      }
+    });
+
+    let totalMinutes = 0;
+    if (member?.voice?.channel) {
+      const joinedTimestamp = member.voice.channel.joinedTimestamp || Date.now();
+      totalMinutes = Math.floor((Date.now() - joinedTimestamp) / 1000 / 60);
+    }
+        // XP/Level
     const totalHours = totalMinutes / 60;
     const XP =
       Math.log(totalMessages + 1) * 12 + Math.pow(totalHours, 1.3) * 6;
     const level = Math.floor(Math.sqrt(XP));
     const xpPercent = Math.min((XP / Math.pow(level + 1, 2)) * 100, 100);
-
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "18px Sans";
-    ctx.fillText(`${totalMinutes} min em call`, 210, 218);
-    ctx.fillText(`Level: ${level} (${xpPercent.toFixed(1)}%)`, 210, 248);
 
     // Barra de XP
     const barX = 360;

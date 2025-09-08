@@ -142,7 +142,7 @@ export default {
 
     ctx.fillStyle = "#ffffff";
     ctx.font = "20px Sans";
-    ctx.fillText(`Level: ${level} (${xpPercent.toFixed(1)}%)`, 55, 328);
+    ctx.fillText(`Level: ${level} (${xpPercent.toFixed(1)}%)`, 70, 330);
 
     // Enviar imagem final
     const attachment = new AttachmentBuilder(await canvas.encode("png"), { name: "profile.png" });

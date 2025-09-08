@@ -128,7 +128,7 @@ export default {
     const barX = 55;
     const barY = 310;
     const barWidth = 646;
-    const barHeight = 20;
+    const barHeight = 26;
 
     ctx.fillStyle = "#555555";
     ctx.fillRect(barX, barY, barWidth, barHeight);
@@ -136,14 +136,14 @@ export default {
     ctx.fillStyle = "#9900ff";
     ctx.fillRect(barX, barY, (xpPercent / 100) * barWidth, barHeight);
 
-    ctx.strokeStyle = "#ffffff";
+    ctx.strokeStyle = "#b4b4b4";
     ctx.lineWidth = 3;
     ctx.strokeRect(barX, barY, barWidth, barHeight); 
 
     ctx.fillStyle = "#ffffff";
-    ctx.font = "18px Sans";
-    ctx.fillText(`Level: ${level} (${xpPercent.toFixed(1)}%)`, 55, 330);
-    
+    ctx.font = "20px Sans";
+    ctx.fillText(`Level: ${level} (${xpPercent.toFixed(1)}%)`, 55, 328);
+
     // Enviar imagem final
     const attachment = new AttachmentBuilder(await canvas.encode("png"), { name: "profile.png" });
     return message.channel.send({ files: [attachment] });

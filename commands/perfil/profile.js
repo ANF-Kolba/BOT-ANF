@@ -74,7 +74,7 @@ export default {
 
     // Tags equipadas (até 3, lado a lado)
     let startX = 50;
-    const y = 225;
+    const y = 255;
     const spacing = 220;
 
     for (const t of inventory.filter(i => i.tag).slice(0, 3)) {
@@ -132,7 +132,7 @@ export default {
 
     ctx.fillStyle = "#ffffff";
     ctx.font = "18px Sans";
-    ctx.fillText(`Level: ${level} (${xpPercent.toFixed(1)}%)`, 55, 305);
+    ctx.fillText(`Level: ${level} (${xpPercent.toFixed(1)}%)`, 55, 310);
 
     ctx.fillStyle = "#555555";
     ctx.fillRect(barX, barY, barWidth, barHeight);

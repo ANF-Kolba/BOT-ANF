@@ -170,9 +170,9 @@ if (user.marriedWith) {
   const marriedUser = await message.client.users.fetch(user.marriedWith).catch(() => null);
 
   if (marriedUser) {
-    const ringImg = await loadImage("https://cdn-icons-png.flaticon.com/512/616/616408.png"); 
-    const startX = 215;
-    const startY = 105;
+    const ringImg = await loadImage("https://img.icons8.com/doodle/48/ring-front-view--v1.png"); 
+    const startX = 55;
+    const startY = 385;
     ctx.drawImage(ringImg, startX, startY, 28, 28);
     ctx.font = "22px Sans";
     ctx.fillStyle = "#ffb6c1";
@@ -180,7 +180,7 @@ if (user.marriedWith) {
     ctx.shadowBlur = 4;          
     ctx.shadowOffsetX = 2;     
     ctx.shadowOffsetY = 2;
-    ctx.fillText(marriedUser.username, startX + 35, startY + 22);
+    ctx.fillText(`Casado com ${marriedUser.username}`, startX + 35, startY + 5);
   }
 }
 

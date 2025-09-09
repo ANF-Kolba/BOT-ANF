@@ -177,7 +177,7 @@ if (user?.marriedWith) {
     ctx.shadowBlur = 4;          
     ctx.shadowOffsetX = 2;     
     ctx.shadowOffsetY = 2;
-    ctx.fillText(`Casado com ${marriedUser.username}`, 70, 380);
+    ctx.fillText(`Casado com ${marriedUser.username}`, 100, 380);
 
     // Enviar imagem final
     const attachment = new AttachmentBuilder(await canvas.encode("png"), { name: "profile.png" });

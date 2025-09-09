@@ -170,7 +170,6 @@ if (user?.marriedWith) {
 }
 
  const ringImg = await loadImage("https://img.icons8.com/office/40/diamond-ring.png");
-    ctx.drawImage(ringImg, 55, 350, 40, 40);
     ctx.font = "23px Sans";
     ctx.fillStyle = "#f588ec";
     ctx.shadowColor = "#000000";   
@@ -178,6 +177,7 @@ if (user?.marriedWith) {
     ctx.shadowOffsetX = 2;     
     ctx.shadowOffsetY = 2;
     ctx.fillText(`Casado com ${marriedUser.username}`, 100, 380);
+    ctx.drawImage(ringImg, 55, 350, 40, 40);
 
     // Enviar imagem final
     const attachment = new AttachmentBuilder(await canvas.encode("png"), { name: "profile.png" });

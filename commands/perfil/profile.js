@@ -39,8 +39,8 @@ export default {
       const bg = await loadImage(banner.url);
       ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
     } else {
-      ctx.fillStyle = "#2c2f33";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      const defaultBg = await loadImage("https://i.imgur.com/nUPUUJd.png");
+  ctx.drawImage(defaultBg, 0, 0, canvas.width, canvas.height);
     }
 
     // Avatar

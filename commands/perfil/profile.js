@@ -164,23 +164,29 @@ export default {
     ctx.fillText(`Level: ${level} (${xpPercent.toFixed(1)}%)`, 70, 330);
 
 
-    // Casamento
+  // Casamento
 if (user.marriedWith) {
   // Buscar usuário casado no cache do bot
   const marriedUser = await message.client.users.fetch(user.marriedWith).catch(() => null);
 
   if (marriedUser) {
     const ringImg = await loadImage("https://img.icons8.com/office/40/diamond-ring.png"); 
-    const startX = 55;
-    const startY = 380;
-    ctx.drawImage(ringImg, startX - 15, startY - 35, 30, 30);
+    const startX = 55; 
+    const startY = 380; 
+
+    const ringSize = 30;
+    ctx.drawImage(ringImg, startX, startY - ringSize / 2, ringSize, ringSize);
+
     ctx.font = "25px Sans";
     ctx.fillStyle = "#ffb6c1";
     ctx.shadowColor = "#000000";   
     ctx.shadowBlur = 10;          
     ctx.shadowOffsetX = 2;     
     ctx.shadowOffsetY = 2;
-    ctx.fillText(`Casado com ${marriedUser.username}`, startX + 35, startY);
+
+    const textX = startX + ringSize + 10; 
+    const textY = startY + 8;
+    ctx.fillText(`Casado com ${marriedUser.username}`, textX, textY);
   }
 }
 

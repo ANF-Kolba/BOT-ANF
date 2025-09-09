@@ -164,31 +164,15 @@ export default {
     ctx.fillText(`Level: ${level} (${xpPercent.toFixed(1)}%)`, 70, 330);
 
 
-  // Casamento
-if (user.marriedWith) {
-  // Buscar usuário casado no cache do bot
-  const marriedUser = await message.client.users.fetch(user.marriedWith).catch(() => null);
-
-  if (marriedUser) {
-    const ringImg = await loadImage("https://img.icons8.com/office/40/diamond-ring.png"); 
-    const startX = 55; 
-    const startY = 380; 
-
-    const ringSize = 30;
-    ctx.drawImage(ringImg, startX, startY - ringSize / 2, ringSize, ringSize);
-
-    ctx.font = "25px Sans";
-    ctx.fillStyle = "#ffb6c1";
+ const ringImg = await loadImage("https://i.imgur.com/oYt9G7K.png");
+    ctx.drawImage(ringImg, 55, 380, 40, 40);
+    ctx.font = "28px Sans";
+    ctx.fillStyle = "#f588ec";
     ctx.shadowColor = "#000000";   
-    ctx.shadowBlur = 10;          
+    ctx.shadowBlur = 4;          
     ctx.shadowOffsetX = 2;     
     ctx.shadowOffsetY = 2;
-
-    const textX = startX + ringSize + 10; 
-    const textY = startY + 8;
-    ctx.fillText(`Casado com ${marriedUser.username}`, textX, textY);
-  }
-}
+    ctx.fillText(`Casado com ${marriedUser.username}`, 70, 380);
 
     // Enviar imagem final
     const attachment = new AttachmentBuilder(await canvas.encode("png"), { name: "profile.png" });

@@ -173,7 +173,7 @@ if (user.marriedWith) {
     const ringImg = await loadImage("https://img.icons8.com/doodle/48/ring-front-view--v1.png"); 
     const startX = 55;
     const startY = 380;
-    ctx.drawImage(ringImg, startX - 15, startY, 40, 40);
+    ctx.drawImage(ringImg, startX - 15, startY - 20, 40, 40);
     ctx.font = "25px Sans";
     ctx.fillStyle = "#ffb6c1";
     ctx.shadowColor = "#000000";   

@@ -164,19 +164,25 @@ export default {
     ctx.fillText(`Level: ${level} (${xpPercent.toFixed(1)}%)`, 70, 330);
 
 
-    let marriedText = "";
+    // Casamento
 if (user.marriedWith) {
-  marriedText = `💍 Casado com <@${user.marriedWith}>`;
-}
+  // Buscar usuário casado no cache do bot
+  const marriedUser = await message.client.users.fetch(user.marriedWith).catch(() => null);
 
-// Mostrar no canvas (abaixo do nome, por exemplo)
-ctx.font = "22px Sans";
-ctx.fillStyle = "#ffb6c1";
-ctx.shadowColor = "#000000";   
-ctx.shadowBlur = 4;          
-ctx.shadowOffsetX = 2;     
-ctx.shadowOffsetY = 2;
-ctx.fillText(marriedText, 55, 380);
+  if (marriedUser) {
+    const ringImg = await loadImage("https://cdn-icons-png.flaticon.com/512/616/616408.png"); 
+    const startX = 215;
+    const startY = 105;
+    ctx.drawImage(ringImg, startX, startY, 28, 28);
+    ctx.font = "22px Sans";
+    ctx.fillStyle = "#ffb6c1";
+    ctx.shadowColor = "#000000";   
+    ctx.shadowBlur = 4;          
+    ctx.shadowOffsetX = 2;     
+    ctx.shadowOffsetY = 2;
+    ctx.fillText(marriedUser.username, startX + 35, startY + 22);
+  }
+}
 
     // Enviar imagem final
     const attachment = new AttachmentBuilder(await canvas.encode("png"), { name: "profile.png" });

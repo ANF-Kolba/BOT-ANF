@@ -56,13 +56,20 @@ export default {
     // Nome do usuário
     ctx.fillStyle = "#ffffff";
     ctx.font = "35px Sans";
+    ctx.shadowColor = "#000000";   
+    ctx.shadowBlur = 4;          
+    ctx.shadowOffsetX = 2;     
+    ctx.shadowOffsetY = 2;
     ctx.fillText(alvo.username, 215, 75);
 
     // Descrição do Discord
-    const userData = await alvo.fetch(true);
-    const description = userData.bio || "Sem descrição.";
+    const description = user?.description || "Sem descrição.";
     ctx.font = "20px Sans";
     ctx.fillStyle = "#cccccc";
+    ctx.shadowColor = "#000000";   
+    ctx.shadowBlur = 4;          
+    ctx.shadowOffsetX = 2;     
+    ctx.shadowOffsetY = 2;
     ctx.fillText(description.slice(0, 60), 215, 100);
 
     // Coins
@@ -98,6 +105,10 @@ export default {
       // Nome da tag ao lado
       ctx.fillStyle = "#ffffff";
       ctx.font = "30px Sans";
+    ctx.shadowColor = "#000000";   
+    ctx.shadowBlur = 4;          
+    ctx.shadowOffsetX = 2;     
+    ctx.shadowOffsetY = 2;
       ctx.fillText(name, startX + 50, y + 10);
 
       startX += spacing;
@@ -146,6 +157,11 @@ export default {
 
     ctx.fillStyle = "#ffffff";
     ctx.font = "20px Sans";
+    
+    ctx.shadowColor = "#000000";   
+    ctx.shadowBlur = 4;          
+    ctx.shadowOffsetX = 2;     
+    ctx.shadowOffsetY = 2;
     ctx.fillText(`Level: ${level} (${xpPercent.toFixed(1)}%)`, 70, 330);
 
     // Enviar imagem final

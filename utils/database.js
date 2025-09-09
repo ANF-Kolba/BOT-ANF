@@ -24,7 +24,8 @@ export const User = sequelize.define(
     lastScratch: { type: DataTypes.DATE, allowNull: true },
     equippedBanner: { type: DataTypes.INTEGER, allowNull: true },
     equippedIcon: { type: DataTypes.INTEGER, allowNull: true },
-    equippedTagId: { type: DataTypes.INTEGER, allowNull: true }, // compatibilidade antiga
+    equippedTagId: { type: DataTypes.INTEGER, allowNull: true },
+    description: { type: DataTypes.STRING, defaultValue: "Sem descrição." },
   },
   { tableName: "Users" }
 );

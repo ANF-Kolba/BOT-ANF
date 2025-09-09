@@ -173,7 +173,7 @@ if (user.marriedWith) {
     const ringImg = await loadImage("https://img.icons8.com/office/40/diamond-ring.png"); 
     const startX = 55;
     const startY = 380;
-    ctx.drawImage(ringImg, startX - 15, startY - 40, 40, 40);
+    ctx.drawImage(ringImg, startX - 15, startY - 35, 30, 30);
     ctx.font = "25px Sans";
     ctx.fillStyle = "#ffb6c1";
     ctx.shadowColor = "#000000";   
@@ -188,4 +188,5 @@ if (user.marriedWith) {
     const attachment = new AttachmentBuilder(await canvas.encode("png"), { name: "profile.png" });
     return message.channel.send({ files: [attachment] });
   }
+
 };

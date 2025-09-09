@@ -170,7 +170,7 @@ if (user.marriedWith) {
   const marriedUser = await message.client.users.fetch(user.marriedWith).catch(() => null);
 
   if (marriedUser) {
-    const ringImg = await loadImage("https://img.icons8.com/doodle/48/ring-front-view--v1.png"); 
+    const ringImg = await loadImage("https://img.icons8.com/office/40/diamond-ring.png"); 
     const startX = 55;
     const startY = 380;
     ctx.drawImage(ringImg, startX - 15, startY - 20, 40, 40);
@@ -180,7 +180,7 @@ if (user.marriedWith) {
     ctx.shadowBlur = 10;          
     ctx.shadowOffsetX = 2;     
     ctx.shadowOffsetY = 2;
-    ctx.fillText(`Casado com ${marriedUser.username}`, startX + 35, startY );
+    ctx.fillText(`Casado com ${marriedUser.username}`, startX + 35, startY -10);
   }
 }
 

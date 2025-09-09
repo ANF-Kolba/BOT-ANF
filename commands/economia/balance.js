@@ -2,8 +2,8 @@ import { EmbedBuilder } from "discord.js";
 import { getUser } from "../../utils/database.js";
 
 export default {
-  name: "balance",
-  description: "Veja seu saldo.",
+  name: "bank",
+  description: "Veja seu saldo",
   async execute(message) {
     const user = await getUser(message.author.id);
 

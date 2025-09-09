@@ -3,7 +3,7 @@ import { getUser, Inventory, Cosmetic, Tag } from "../../utils/database.js";
 
 export default {
   name: "removeitem",
-  description: "Remove um item, cosmético ou tag do inventário de um usuário (admin only)",
+  description: "Remove um item, cosmético ou tag do inventário de um usuário (admin only) | `!removeitem @usuario {nome-do-item} [cosmetic/tag]`",
   async execute(message, args) {
     if (!message.member.permissions.has("Administrator")) {
       return message.reply("❌ Você não tem permissão para isso.");

@@ -3,7 +3,7 @@ import { ShopItem, Cosmetic, Tag } from "../../utils/database.js";
 
 export default {
   name: "removeshop",
-  description: "Remove um item, cosmético, cargo ou tag da loja (admin only)",
+  description: "Remove um item, cosmético, cargo ou tag da loja (admin only) | `!removeshop {nome-do-item}` ou `!removeshop {@role}`",
   async execute(message, args) {
     if (!message.member.permissions.has("Administrator")) {
       return message.reply("❌ Você não tem permissão para isso.");

@@ -3,7 +3,7 @@ import { ShopItem, Cosmetic, User, Inventory, Tag } from "../../utils/database.j
 
 export default {
   name: "buy",
-  description: "Comprar item, lootbox, cosmético, cargo ou tag na loja",
+  description: "Comprar item, lootbox, cosmético, cargo ou tag na loja. Use: `!buy {nome-do-item}`",
   async execute(message, args) {
     if (!args[0]) return message.reply("❌ Use: `!buy {nome-do-item}`");
 

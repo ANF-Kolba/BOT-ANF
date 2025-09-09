@@ -36,7 +36,7 @@ const lootTable = {
 
 export default {
   name: "lootbox",
-  description: "Abre ou mostra informações de lootboxes.",
+  description: "Abre ou mostra informações de lootboxes. Use: `!lootbox info {raridade}` ou `!lootbox abrir {raridade}`",
   async execute(message, args) {
     const sub = args[0]?.toLowerCase();
 

@@ -70,7 +70,7 @@ export default {
     ctx.shadowBlur = 4;          
     ctx.shadowOffsetX = 2;     
     ctx.shadowOffsetY = 2;
-    ctx.fillText(description.slice(0, 60), 215, 100);
+    ctx.fillText(description.slice(0, 60), 220, 110);
 
     // Coins
     const coinImg = await loadImage("https://cdn-icons-png.flaticon.com/512/138/138292.png");
@@ -157,12 +157,26 @@ export default {
 
     ctx.fillStyle = "#ffffff";
     ctx.font = "20px Sans";
-    
     ctx.shadowColor = "#000000";   
     ctx.shadowBlur = 4;          
     ctx.shadowOffsetX = 2;     
     ctx.shadowOffsetY = 2;
     ctx.fillText(`Level: ${level} (${xpPercent.toFixed(1)}%)`, 70, 330);
+
+
+    let marriedText = "";
+if (user.marriedWith) {
+  marriedText = `💍 Casado com <@${user.marriedWith}>`;
+}
+
+// Mostrar no canvas (abaixo do nome, por exemplo)
+ctx.font = "22px Sans";
+ctx.fillStyle = "#ffb6c1";
+ctx.shadowColor = "#000000";   
+ctx.shadowBlur = 4;          
+ctx.shadowOffsetX = 2;     
+ctx.shadowOffsetY = 2;
+ctx.fillText(marriedText, 55, 380);
 
     // Enviar imagem final
     const attachment = new AttachmentBuilder(await canvas.encode("png"), { name: "profile.png" });

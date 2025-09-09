@@ -3,7 +3,7 @@ import { EmbedBuilder } from "discord.js";
 
 export default {
   name: "addtag",
-  description: "Adiciona uma nova tag à loja (admin only)",
+  description: "Adiciona uma nova tag à loja (admin only) | Use: !addtag {preço} {nome da tag} {emoji}",
   async execute(message, args) {
     if (!message.member.permissions.has("Administrator"))
       return message.reply("❌ Você não tem permissão.");

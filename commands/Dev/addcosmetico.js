@@ -3,7 +3,7 @@ import { EmbedBuilder } from "discord.js";
 
 export default {
   name: "addcosmetic",
-  description: "Adiciona um banner ou ícone ao banco",
+  description: "Adiciona um banner ou ícone ao banco | Use: !addcosmetic {banner|icon} {nome} {url} {preço}",
   async execute(message, args) {
     if (!message.member.permissions.has("Administrator"))
       return message.reply("❌ Sem permissão.");

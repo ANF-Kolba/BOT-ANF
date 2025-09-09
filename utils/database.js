@@ -26,6 +26,10 @@ export const User = sequelize.define(
     equippedIcon: { type: DataTypes.INTEGER, allowNull: true },
     equippedTagId: { type: DataTypes.INTEGER, allowNull: true },
     description: { type: DataTypes.STRING, defaultValue: "Sem descrição." },
+
+    // 💍 Campos de casamento
+    marriedWith: { type: DataTypes.STRING, allowNull: true }, // ID do cônjuge
+    marriedSince: { type: DataTypes.DATE, allowNull: true },  // Data do casamento
   },
   { tableName: "Users" }
 );
@@ -48,8 +52,8 @@ export const Tag = sequelize.define(
   "Tag",
   {
     id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-    name: { type: DataTypes.STRING, allowNull: false }, // Ex: "Fogo"
-    tag: { type: DataTypes.STRING, allowNull: false, defaultValue: "🔥" }, // Emoji
+    name: { type: DataTypes.STRING, allowNull: false }, 
+    tag: { type: DataTypes.STRING, allowNull: false, defaultValue: "🔥" }, 
     price: { type: DataTypes.INTEGER, defaultValue: 0 },
   },
   { tableName: "Tags" }
@@ -71,10 +75,8 @@ export const Inventory = sequelize.define(
       allowNull: true,
       references: { model: Tag, key: "id" },
     },
-
-    // 🔥 novos campos para equipáveis
     equipped: { type: DataTypes.BOOLEAN, defaultValue: false },
-    equippedSlot: { type: DataTypes.INTEGER, allowNull: true }, // 1, 2, 3...
+    equippedSlot: { type: DataTypes.INTEGER, allowNull: true },
   },
   { tableName: "Inventories" }
 );
@@ -108,7 +110,7 @@ Inventory.belongsTo(Tag, { foreignKey: "tagId", as: "tag" });
 export async function initDB() {
   try {
     await sequelize.authenticate();
-    await sequelize.sync({ alter: true }); // altera colunas sem apagar dados
+    await sequelize.sync({ alter: true });
     console.log("✅ Banco PostgreSQL conectado e sincronizado!");
   } catch (err) {
     console.error("❌ Erro ao conectar ao banco:", err);
@@ -166,7 +168,7 @@ export async function getFullShop() {
     name: t.name,
     price: t.price,
     type: "tag",
-    reference: t.tag, // emoji
+    reference: t.tag,
     url: null,
   }));
 
@@ -178,8 +180,8 @@ export async function getInventory(userId) {
   const inv = await Inventory.findAll({
     where: { userId },
     include: [
-      { model: Cosmetic, as: "cosmetic" }, // ✅ usa o alias certo
-      { model: Tag, as: "tag" },            // ✅ usa o alias certo
+      { model: Cosmetic, as: "cosmetic" },
+      { model: Tag, as: "tag" },
     ],
   });
 
@@ -201,22 +203,11 @@ export async function getInventory(userId) {
   }));
 }
 
-
-export async function addItemToInventory(
-  userId,
-  itemName,
-  cosmeticId = null,
-  tagId = null
-) {
+export async function addItemToInventory(userId, itemName, cosmeticId = null, tagId = null) {
   await Inventory.create({ userId, item: itemName, cosmeticId, tagId });
 }
 
-export async function removeItemFromInventory(
-  userId,
-  itemName,
-  cosmeticId = null,
-  tagId = null
-) {
+export async function removeItemFromInventory(userId, itemName, cosmeticId = null, tagId = null) {
   const where = { userId };
   if (cosmeticId) where.cosmeticId = cosmeticId;
   else if (tagId) where.tagId = tagId;

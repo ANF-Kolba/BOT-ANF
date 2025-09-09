@@ -3,7 +3,7 @@ import { ShopItem } from "../../utils/database.js";
 
 export default {
   name: "addrole",
-  description: "Adiciona um cargo à loja (admin only)",
+  description: "Adiciona um cargo à loja (admin only) | Use: `!addrole {nome-do-item} {@cargo} {preço}`",
   async execute(message, args) {
     if (!message.member.permissions.has("Administrator")) {
       return message.reply("❌ Você não tem permissão para isso.");

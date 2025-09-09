@@ -3,7 +3,7 @@ import { getUser, Inventory, Cosmetic } from "../../utils/database.js";
 
 export default {
   name: "giveitem",
-  description: "Adiciona um item ou cosmético ao inventário de um usuário (admin only)",
+  description: "Adiciona um item ou cosmético ao inventário de um usuário (admin only) | Use: `!giveitem @usuario {nome-do-item} [cosmetic]`",
   async execute(message, args) {
     if (!message.member.permissions.has("Administrator")) {
       return message.reply("❌ Você não tem permissão para isso.");

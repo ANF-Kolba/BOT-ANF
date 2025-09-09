@@ -169,9 +169,9 @@ if (user?.marriedWith) {
   marriedUser = await message.client.users.fetch(user.marriedWith).catch(() => null);
 }
 
- const ringImg = await loadImage("https://i.imgur.com/oYt9G7K.png");
-    ctx.drawImage(ringImg, 55, 380, 40, 40);
-    ctx.font = "28px Sans";
+ const ringImg = await loadImage("https://img.icons8.com/office/40/diamond-ring.png");
+    ctx.drawImage(ringImg, 55, 350, 40, 40);
+    ctx.font = "23px Sans";
     ctx.fillStyle = "#f588ec";
     ctx.shadowColor = "#000000";   
     ctx.shadowBlur = 4;          

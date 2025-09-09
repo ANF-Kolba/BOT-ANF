@@ -68,9 +68,13 @@ export default {
     // Coins
     const coinImg = await loadImage("https://cdn-icons-png.flaticon.com/512/138/138292.png");
     ctx.drawImage(coinImg, 215, 140, 40, 40);
-    ctx.font = "30px Sans";
-    ctx.fillStyle = "#ffd700";
-    ctx.fillText(`${coins} ANF Coins`, 270, 175);
+    ctx.font = "28px Sans";
+    ctx.fillStyle = "#f1dd67ff";
+    ctx.shadowColor = "#000000";   
+    ctx.shadowBlur = 4;          
+    ctx.shadowOffsetX = 2;     
+    ctx.shadowOffsetY = 2;
+    ctx.fillText(`${coins} ANF Coins`, 265, 170);
 
     // Tags equipadas (até 3, lado a lado)
     let startX = 50;

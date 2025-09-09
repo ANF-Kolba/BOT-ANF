@@ -172,15 +172,15 @@ if (user.marriedWith) {
   if (marriedUser) {
     const ringImg = await loadImage("https://img.icons8.com/doodle/48/ring-front-view--v1.png"); 
     const startX = 55;
-    const startY = 385;
-    ctx.drawImage(ringImg, startX, startY, 28, 28);
-    ctx.font = "22px Sans";
+    const startY = 380;
+    ctx.drawImage(ringImg, startX, startY, 30, 30);
+    ctx.font = "25px Sans";
     ctx.fillStyle = "#ffb6c1";
     ctx.shadowColor = "#000000";   
     ctx.shadowBlur = 4;          
     ctx.shadowOffsetX = 2;     
     ctx.shadowOffsetY = 2;
-    ctx.fillText(`Casado com ${marriedUser.username}`, startX + 35, startY + 5);
+    ctx.fillText(`Casado com ${marriedUser.username}`, startX + 35, startY);
   }
 }
 

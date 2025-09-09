@@ -163,6 +163,11 @@ export default {
     ctx.shadowOffsetY = 2;
     ctx.fillText(`Level: ${level} (${xpPercent.toFixed(1)}%)`, 70, 330);
 
+// Buscar usuário com quem está casado (se houver)
+let marriedUser = null;
+if (user?.marriedWith) {
+  marriedUser = await message.client.users.fetch(user.marriedWith).catch(() => null);
+}
 
  const ringImg = await loadImage("https://i.imgur.com/oYt9G7K.png");
     ctx.drawImage(ringImg, 55, 380, 40, 40);

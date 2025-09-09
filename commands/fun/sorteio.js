@@ -2,18 +2,20 @@ import { EmbedBuilder } from "discord.js";
 
 export default {
   name: "sorteio",
-  description: "Inicia um sorteio rápido | Use: `!sorteio <tempo_em_segundos> <prêmio>` (mínimo 5 segundos)",
+  description: "Inicia um sorteio rápido | Use: `!sorteio <tempo_em_minutos> <prêmio>` (mínimo 1 minuto)",
   async execute(message, args) {
-    const tempo = parseInt(args[0]); // em segundos
+    const tempo = parseInt(args[0]); // em minutos
     const premio = args.slice(1).join(" ") || "🎁 Surpresa!";
 
-    if (isNaN(tempo) || tempo < 5) {
-      return message.reply("❌ Use: `!sorteio <tempo_em_segundos> <prêmio>` (mínimo 5 segundos)");
+    if (isNaN(tempo) || tempo < 1) {
+      return message.reply("❌ Use: `!sorteio <tempo_em_minutos> <prêmio>` (mínimo 1 minuto)");
     }
 
     const embed = new EmbedBuilder()
       .setTitle("🎉 Novo Sorteio!")
-      .setDescription(`🎁 **Prêmio:** ${premio}\n⏳ **Tempo:** ${tempo} segundos\n\nReaja com 🎉 para participar!`)
+      .setDescription(
+        `🎁 **Prêmio:** ${premio}\n⏳ **Tempo:** ${tempo} minuto(s)\n\nReaja com 🎉 para participar!`
+      )
       .setColor("Purple");
 
     const msg = await message.channel.send({ embeds: [embed] });
@@ -29,6 +31,6 @@ export default {
 
       const vencedor = participantes[Math.floor(Math.random() * participantes.length)];
       return message.channel.send(`🎉 Parabéns ${vencedor}! Você ganhou **${premio}**`);
-    }, tempo * 1000);
+    }, tempo * 60 * 1000); // minutos -> ms
   }
 };

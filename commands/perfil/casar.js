@@ -26,7 +26,7 @@ export default {
     const embed = new EmbedBuilder()
       .setTitle("💍 Pedido de Casamento")
       .setDescription(`${alvo}, você aceita se casar com ${message.author}?`)
-      .setColor("Pink");
+      .setColor("#ff8ebd");
 
     const msg = await message.channel.send({ content: `${alvo}`, embeds: [embed] });
 

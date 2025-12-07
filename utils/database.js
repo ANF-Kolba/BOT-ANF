@@ -2,6 +2,7 @@ import { Sequelize, DataTypes } from "sequelize";
 import pg from "pg";
 
 //---------------------- CONEXÃO ----------------------
+pg.defaults.ssl = true;
 
 export const sequelize = new Sequelize(process.env.DATABASE_URL, {
   dialect: "postgres",

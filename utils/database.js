@@ -2,13 +2,12 @@ import { Sequelize, DataTypes } from "sequelize";
 
 // ---------------------- CONEXÃO ----------------------
 import pg from "pg";
-
 pg.defaults.ssl = { rejectUnauthorized: false };
 
 export const sequelize = new Sequelize(process.env.DATABASE_URL, {
   dialect: "postgres",
   dialectModule: pg,
-  logging: false
+  logging: false,
 });
 // ---------------------- MODELOS ----------------------
 

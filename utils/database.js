@@ -126,7 +126,7 @@ export async function updateShopPrice(id, price) {
   return ShopItem.update({ price }, { where: { id } });
 }
 
-// 🎒 Inventário
+// 🎒 Inventárioz
 export async function addItemToInventory(userId, shopItemId) {
   return Inventory.create({ userId, shopItemId });
 }

@@ -1,55 +1,36 @@
-import { Cosmetic, ShopItem } from "../../utils/database.js";
+import { ShopItem } from "../../utils/database.js";
 import { EmbedBuilder } from "discord.js";
 
 export default {
-  name: "addcosmetic",
-  description: "Adiciona banner ou ícone e coloca na loja",
+  name: "addcosmetico",
+  description: "Adiciona um banner ou ícone à loja",
   category: "dev",
   hidden: true,
-
   async execute(message, args) {
-    if (!message.member.permissions.has("Administrator")) {
+    if (!message.member.permissions.has("Administrator"))
       return message.reply("❌ Sem permissão.");
-    }
 
-    const type = args[0]?.toLowerCase();
-    const price = parseInt(args[args.length - 1]);
+    const type = args[0]?.toLowerCase(); // banner ou icon
+    if (!["banner", "icon"].includes(type))
+      return message.reply("❌ Tipo inválido! Use banner ou icon.");
+
+    const price = parseInt(args[args.length - 1]) || 0;
     const url = args[args.length - 2];
-    const name = args.slice(1, -2).join(" ");
 
-    if (!["banner", "icon"].includes(type)) {
-      return message.reply("❌ Use banner ou icon.");
-    }
+    if (!url) return message.reply("❌ É necessário informar a URL do item.");
 
-    if (!name || !url || isNaN(price)) {
-      return message.reply(
-        "❌ Use: !addcosmetic <banner|icon> <nome> <url> <preço>"
-      );
-    }
+    // Nome composto: pega tudo entre type e url
+    const name = args.slice(1, args.length - 2).join(" ");
+    if (!name) return message.reply("❌ É necessário informar o nome do item.");
 
-    const exists = await Cosmetic.findOne({ where: { name, type } });
-    if (exists) {
-      return message.reply("❌ Cosmético já existe.");
-    }
-
-    // 🎨 cria cosmético
-    const cosmetic = await Cosmetic.create({ name, type, url, price });
-
-    // 🛒 cria item na loja
-    await ShopItem.create({
-      item: name,
-      price,
-      type,
-      reference: cosmetic.id.toString(),
-    });
+    // Criar item no banco
+    const item = await ShopItem.create({ type, name, url, price });
 
     const embed = new EmbedBuilder()
-      .setTitle("🎨 Cosmético adicionado!")
-      .setDescription(
-        `**${name}** (${type})\n💰 ${price} coins\n🆔 ID: ${cosmetic.id}`
-      )
-      .setImage(url)
-      .setColor("Green");
+      .setTitle("🎨 Item adicionado à loja!")
+      .setDescription(`**${item.name}** (${item.type}) adicionado com sucesso.`)
+      .setImage(item.url)
+      .setColor("Blue");
 
     return message.channel.send({ embeds: [embed] });
   },
